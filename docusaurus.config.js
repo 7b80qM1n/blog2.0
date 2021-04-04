@@ -61,11 +61,11 @@ module.exports = {
         },
       ],
     },
-    // algolia: {
-    //   apiKey: "d95e3410bcf9a842ca04da9e5cd16168",
-    //   indexName: "blog",
-    //   appId: "8QDD70BS8W",
-    // },
+    algolia: {
+      apiKey: "d95e3410bcf9a842ca04da9e5cd16168",
+      indexName: "blog",
+      appId: "8QDD70BS8W",
+    },
     footer: {
       style: "dark",
       links: [
@@ -120,10 +120,10 @@ module.exports = {
       darkTheme: require("prism-react-renderer/themes/oceanicNext"),
       defaultLanguage: "javascript",
     },
-    // googleAnalytics: {
-    //   trackingID: "UA-118572241-1",
-    //   anonymizeIP: true, // Should IPs be anonymized?
-    // },
+    googleAnalytics: {
+      trackingID: "UA-118572241-1",
+      anonymizeIP: true, // Should IPs be anonymized?
+    },
     gtag: {
       trackingID: "G-6PSESJX0BM",
       // Optional fields.
