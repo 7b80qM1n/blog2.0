@@ -61,11 +61,11 @@ module.exports = {
         },
       ],
     },
-    algolia: {
-      apiKey: "d95e3410bcf9a842ca04da9e5cd16168",
-      indexName: "blog",
-      appId: "8QDD70BS8W",
-    },
+    // algolia: {
+    //   apiKey: "d95e3410bcf9a842ca04da9e5cd16168",
+    //   indexName: "blog",
+    //   appId: "8QDD70BS8W",
+    // },
     footer: {
       style: "dark",
       links: [
