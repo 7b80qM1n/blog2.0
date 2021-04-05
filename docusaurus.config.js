@@ -38,6 +38,17 @@ module.exports = {
           ],
         },
         {
+          label: "笔记",
+          position: "right",
+          items: [
+            {
+              label: "python后端",
+              // position: "right",
+              to: "docs/note/pythonBackend/python三大框架/pythonBackend-1",
+            },
+          ],
+        },
+        {
           label: "博客",
           position: "right",
           items: [
@@ -61,11 +72,11 @@ module.exports = {
         },
       ],
     },
-    // algolia: {
-    //   apiKey: "d95e3410bcf9a842ca04da9e5cd16168",
-    //   indexName: "blog",
-    //   appId: "8QDD70BS8W",
-    // },
+    algolia: {
+      apiKey: "25626fae796133dc1e734c6bcaaeac3c",
+      indexName: "docsearch",
+      // appId: "8QDD70BS8W",
+    },
     footer: {
       style: "dark",
       links: [

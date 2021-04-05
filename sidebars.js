@@ -20,4 +20,14 @@ module.exports = {
               "resources/socket/基于socketserver实现并发的socket套接字编程/socket10",
             ],
   },
+  note:{
+    杂七杂八:["note/Assorted/pycharm/pythonBackend-Assorted-1",
+              "note/Assorted/优化/pythonBackend-Assorted-2",
+  ],
+    django:["note/pythonBackend/python三大框架/pythonBackend-1",
+            "note/pythonBackend/django初识/pythonBackend-django01",
+            "note/pythonBackend/django生命周期/pythonBackend-django02",
+    // "",
+    ],
+  },
 };
