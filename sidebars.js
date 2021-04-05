@@ -27,6 +27,7 @@ module.exports = {
     django:["note/pythonBackend/python三大框架/pythonBackend-1",
             "note/pythonBackend/django初识/pythonBackend-django01",
             "note/pythonBackend/django生命周期/pythonBackend-django02",
+            "note/pythonBackend/DjangoRestFramework/pythonBackend-django03",
     // "",
     ],
   },
