@@ -1,5 +1,5 @@
 ---
-slug: python/Django-admin后台设置
+slug: blog/python/Django-admin后台设置
 
 title: "Django 设置admin后台表和App(应用)为中文名" 
 

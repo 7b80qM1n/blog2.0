@@ -82,11 +82,11 @@ module.exports = {
         },
       ],
     },
-    algolia: {
-      apiKey: "12d60893d1554cadaf090f4ad3ee740a",
-      indexName: "blog",
-      appId: "8QDD70BS8W",
-    },
+    // algolia: {
+    //   apiKey: "12d60893d1554cadaf090f4ad3ee740a",
+    //   indexName: "blog",
+    //   appId: "8QDD70BS8W",
+    // },
     footer: {
       style: "dark",
       links: [
@@ -190,15 +190,27 @@ module.exports = {
     path.resolve(__dirname, "./src/plugin/plugin-google-adsense"),
     path.resolve(__dirname, "./src/plugin/plugin-onesignal-push"),
     "docusaurus2-dotenv",
-    // [
-    //   "@easyops-cn/docusaurus-search-local",
-    //   {
-    //     hashed: true,
-    //     // indexPages: true,
-    //     blogRouteBasePath: "/",
-    //     language: ["en", "zh"],
-    //   },
-    // ],
+    [
+      "@easyops-cn/docusaurus-search-local",
+      {
+        hashed: true,
+        indexDocs: true,
+        indexBlog: true,
+        docsRouteBasePath: "/docs",
+        blogRouteBasePath: "/blog",
+        language: ["en", "zh"],
+        translations:{
+          "search_placeholder": "搜索..",
+          "see_all_results": "查看所有搜索结果",
+          "no_results": "没找到任何相关结果.",
+          "search_results_for": "搜索到 \"{{ keyword }}\" 的相关结果",
+          "search_the_documentation": "搜索文档",
+          "count_documents_found": "只找到{{ count }}篇相关文档",
+          "count_documents_found_plural": "找到{{ count }}篇相关文档",
+          "no_documents_were_found": "没找到任何相关文档"
+        }
+      },
+    ],
   ],
   stylesheets: [
     {
