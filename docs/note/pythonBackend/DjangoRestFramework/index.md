@@ -6,20 +6,14 @@ title: Django Rest Framework
 ---
 
 ## web的两种开发模式
+  
+- 前后端分离: 只专注于写后端接口，返回json，xml格式数据
+  - 业务服务器和静态服务器是分开的
+  - ![image-20201107194712199](https://gitee.com/JqM1n/biog-image/raw/master/20201107194712.png)
 
-````python
-前后端混合开发   返回的是html页面 需要写模板
-前后端分离      只专注于写后端接口，返回json，xml格式数据
-# xml格式
-<xml>
-     <name>jqm</name>
- </xml>
-# json格式
-     { "name" : "1qz"}
-    # java--->jsp
-# 动态页面（查数据库的）静态页面（静止的html)
-# 页面静态化
-````
+- 前后端不分离: 前后端混合开发   返回的是html页面 需要写模板
+  - 页面和数据都是由后端处理的
+  - ![image-20201107194732895](https://gitee.com/JqM1n/biog-image/raw/master/20201107194733.png)
 
 ## Restful规范
 

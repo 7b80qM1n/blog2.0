@@ -31,9 +31,14 @@ module.exports = {
           position: "right",
           items: [
             {
+              label: "网络基础",
+              // position: "right",
+              to: "docs/resources/Networking Essentials/TCP/NetworkingEssentials-01",
+            },
+            {
               label: "网络编程",
               // position: "right",
-              to: "docs/resources/socket/网络架构及其演变过程/socket01",
+              to: "docs/resources/socket/模拟ssh远程执行命令/socket06",
             },
           ],
         },
@@ -41,6 +46,11 @@ module.exports = {
           label: "笔记",
           position: "right",
           items: [
+            {
+              label: "前端",
+              // position: "right",
+              to: "docs/note/frontEnd/http/http01",
+            },
             {
               label: "python后端",
               // position: "right",
@@ -73,9 +83,9 @@ module.exports = {
       ],
     },
     algolia: {
-      apiKey: "25626fae796133dc1e734c6bcaaeac3c",
-      indexName: "docsearch",
-      // appId: "8QDD70BS8W",
+      apiKey: "12d60893d1554cadaf090f4ad3ee740a",
+      indexName: "blog",
+      appId: "8QDD70BS8W",
     },
     footer: {
       style: "dark",
