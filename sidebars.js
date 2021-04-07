@@ -15,6 +15,7 @@ module.exports = {
               "resources/Networking Essentials/SDWAN/NetworkingEssentials-04",
               "resources/Networking Essentials/ping的过程/NetworkingEssentials-05",
     ],
+
     网络编程:[
       // "resources/socket/网络架构及其演变过程/socket01",
               // "resources/socket/OSI七层协议/socket02",
@@ -26,7 +27,13 @@ module.exports = {
               "resources/socket/解决粘包问题/socket08",
               "resources/socket/基于UDP协议的socket套接字编程/socket09",
               "resources/socket/基于socketserver实现并发的socket套接字编程/socket10",
-            ],
+    ],
+
+    并发编程:["resources/Concurrent programming/进程/Concurrent01",
+              "resources/Concurrent programming/线程/Concurrent02",
+              "resources/Concurrent programming/协程/Concurrent03",
+      
+    ],
   },
   note:{
     杂七杂八:["note/Assorted/pycharm/pythonBackend-Assorted-1",
@@ -49,6 +56,8 @@ module.exports = {
             "note/pythonBackend/django初识/pythonBackend-django01",
             "note/pythonBackend/django生命周期/pythonBackend-django02",
             "note/pythonBackend/DjangoRestFramework/pythonBackend-django03",
+            "note/pythonBackend/DRF目录重构/pythonBackend-django04",
+            "note/pythonBackend/Celery异步任务框架/pythonBackend-django05",
     // "",
     ],
   },

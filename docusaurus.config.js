@@ -40,6 +40,11 @@ module.exports = {
               // position: "right",
               to: "docs/resources/socket/模拟ssh远程执行命令/socket06",
             },
+            {
+              label: "并发编程",
+              // position: "right",
+              to: "docs/resources/Concurrent programming/进程/Concurrent01",
+            },
           ],
         },
         {
@@ -52,7 +57,7 @@ module.exports = {
               to: "docs/note/frontEnd/http/http01",
             },
             {
-              label: "python后端",
+              label: "后端",
               // position: "right",
               to: "docs/note/pythonBackend/python三大框架/pythonBackend-1",
             },
