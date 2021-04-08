@@ -105,6 +105,30 @@ print(sorted(A, key=lambda x: ((x < 0), abs(x))))
 """
 ```
 
+## 编程找出1000以内的所有完数
+
+```python
+"""python一个数如果恰好等于它的因子之和。这个数就称为完数。例如:6= 1 + 2+3"""
+for n in range(1, 1000):
+    factor_list = []   # 因数列表
+    for factor in range(1, n):
+        if n % factor == 0:
+            factor_list.append(factor)
+    if n == sum(factor_list):
+        print(n, factor_list)
+```
+
+## 一行代码通过filter和lambda函数输出以下列表索引为奇数对应的元素
+
+```python
+"""
+list(enumerate(list_b))) ===> [(0, 12), (1, 213), (2, 22), (3, 2), (4, 2), (5, 2), (6, 22), (7, 2), (8, 2), (9, 32)]
+[i for i in filter(lambda a: a[0] % 2 == 1, list(enumerate(list_b)))]  ====> [(1, 213), (3, 2), (5, 2), (7, 2), (9, 32)]
+"""
+list_b = [12, 213, 22, 2, 2, 2, 22, 2, 2, 32]
+print([i[1] for i in filter(lambda a: a[0] % 2 == 1, list(enumerate(list_b)))])  # [213, 2, 2, 2, 32]
+```
+
 **考点:	逻辑运算符**
 
 **运算顺序:	()  > not  > and  > or**
@@ -120,6 +144,10 @@ print(0 and 2 and 1)
 print(0 and 2 or 1)
 print(0 and 2 or 1 or 4)
 print(0 or False and 1)
+"""
+1 or 2和1 and 2输出分别是什么?为什么?
+1 <(2 ==2)和1< 2 =2结果是什么?为什么?
+"""
 ```
 
 **考点:简单但实用性强**
@@ -188,5 +216,77 @@ B. 2 3 4 1 5
 C. 1 5 4 2 3
 D. 2 3 1 4 5
 """
+```
+
+**考点:删除列表元素会导致列表索引发生变化**
+
+```python
+"""
+阅读以下代码,并写出程序的输出结果
+"""
+alist = [2, 4, 5, 6, 7]
+for var in alist:
+    if var % 2 == 0:
+        alist.remove(var)
+print(alist)  # [4, 5, 7]
+```
+
+**考点:内存指向问题**
+
+```python
+"""
+求结果:
+"""
+kvps = {"1":1, "2":2}
+theCopy = kvps  # 赋值操作就是让两个变量指向同一个内存地址
+kvps["1"] = 5
+sum = kvps["1"] + theCopy["1"]
+print(sum)   # 5 + 5 = 10
+```
+
+![image-20210408104639744](https://gitee.com/JqM1n/biog-image/raw/master/20210408104646.png)
+
+**考点:浅拷贝**
+
+```python
+A = ["Amir", "Barry", "Chales", "Dao"]
+B = A
+C = A[:]
+B[0] = "Alice"
+C[1] = "Bob"
+sum = 0
+for ls in (A, B, C):
+    if ls[0] == "Alice":
+        sum += 1
+    if ls[1] == "Bob":
+        sum += 10
+print(sum)	# 12
+```
+
+**考点:装饰器**
+
+```python
+"""写装饰器,限制函数被执行的频率,如10秒一次"""
+import time
+def wrapper(func):
+    start_time = 0   # 函数上次执行时间
+    def inner(*args, **kwargs):
+        nonlocal start_time
+        now_time = time.time()
+        if now_time - start_time > 10:
+            ret = func(*args, **kwargs)
+            start_time = now_time
+            return ret
+        else:
+            print(f"访问频繁,{10-int(now_time - start_time)}秒后再试")
+    return inner
+
+@wrapper
+def func():
+    print("函数执行了")
+
+while True:
+    func()
+    time.sleep(1)
 ```
 
