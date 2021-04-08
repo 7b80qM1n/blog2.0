@@ -207,7 +207,7 @@ module.exports = {
         translations:{
           "search_placeholder": "搜索..",
           "see_all_results": "查看所有搜索结果",
-          "no_results": "没找到任何相关结果.",
+          "no_results": "什么都没有找到啊 T_T",
           "search_results_for": "搜索到 \"{{ keyword }}\" 的相关结果",
           "search_the_documentation": "搜索文档",
           "count_documents_found": "只找到{{ count }}篇相关文档",

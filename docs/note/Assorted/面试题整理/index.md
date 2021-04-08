@@ -290,3 +290,25 @@ while True:
     time.sleep(1)
 ```
 
+**考点:默写单例**  单例:一个类 从头到尾 只会创建一次self的空间
+
+```python
+class A:
+    __boy = None                  # 随便弄个变量
+
+    def __new__(cls, *args, **kwargs):
+        if cls.__boy is None:      # 判断
+            cls.__boy = super().__new__(cls)   # 
+        return cls.__boy        # init里的东西都在这里
+
+    def __init__(self, name, age):
+        self.name = name
+        self.age = age
+
+a1 = A('jqm', 18)
+print(a1.name)            #   jqm
+a2 = A('whh', 18)         # 和a1指向的地址一样
+print(a1.name)           #  whh
+print(a2.name)           #  whh
+```
+
