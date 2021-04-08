@@ -38,6 +38,7 @@ module.exports = {
   note:{
     杂七杂八:["note/Assorted/pycharm/pythonBackend-Assorted-1",
               "note/Assorted/优化/pythonBackend-Assorted-2",
+              "note/Assorted/面试题整理/pythonBackend-Assorted-3",
     ],
     常用模块:["note/Commonly used modules/open文件操作/modules01",
               "note/Commonly used modules/json模块/modules02",
