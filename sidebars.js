@@ -40,6 +40,13 @@ module.exports = {
               "note/Assorted/优化/pythonBackend-Assorted-2",
               "note/Assorted/面试题整理/pythonBackend-Assorted-3",
     ],
+    py基础:["note/pythonBasics/str常用操作/pythonBasics-str1",
+              "note/pythonBasics/列表常用操作/pythonBasics-list1",
+              "note/pythonBasics/字典常用操作/pythonBasics-dict1",
+              "note/pythonBasics/函数/pythonBasics-function1",
+              "note/pythonBasics/代码块缓存机制/pythonBasics-01",
+
+    ],
     常用模块:["note/Commonly used modules/open文件操作/modules01",
               "note/Commonly used modules/json模块/modules02",
               "note/Commonly used modules/sys模块/modules03",
