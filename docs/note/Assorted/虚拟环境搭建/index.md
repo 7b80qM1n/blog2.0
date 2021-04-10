@@ -1,37 +1,21 @@
 ---
-slug: blog/linux/虚拟环境搭建
 
-title: "虚拟环境搭建" 
+id: Assorted-virtualenv1
 
-author: 庆民gg
-
-tags: [linux,]
-
-
-
+title: 虚拟环境搭建
 ---
 
+## 好处
 
-
-#####
-
-import useBaseUrl from '@docusaurus/useBaseUrl';
-
-#### 1、使不同应用开发环境相互独立
-
-#### 2、环境升级不影响其他应用，也不会影响全局的python环境
-
-#### 3、防止出现包管理混乱及包版本冲突
-
-<!-- truncate -->
-
-## 虚拟环境搭建
+1. 使不同应用开发环境相互独立
+2. 环境升级不影响其他应用，也不会影响全局的python环境
+3. 防止出现包管理混乱及包版本冲突
 
 ## windows
 
 ##### 安装
 
-```
+```shell
 pip3 install virtualenv
 pip3 install virtualenvwrapper-win
 ```
@@ -51,7 +35,7 @@ eg: WORKON_HOME: E:\Develop\virtual_envPy
 
 ##### 安装
 
-```
+```shell
 pip3 install -i https://pypi.douban.com/simple virtualenv
 pip3 install -i https://pypi.douban.com/simple virtualenvwrapper
 ```

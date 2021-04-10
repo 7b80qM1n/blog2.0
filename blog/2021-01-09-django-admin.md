@@ -5,15 +5,12 @@ title: "Django 设置admin后台表和App(应用)为中文名"
 
 author: 庆民gg
 
-tags: [python,问题/坑/]
+tags: [django,]
 
 
 
 ---
 
-
-
-#####
 <table>
      <tr>
         <td ><center><img src="https://gitee.com/JqM1n/biog-image/raw/master/20210311200802.png"/></center></td>

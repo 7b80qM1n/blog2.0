@@ -68,11 +68,11 @@
     "description": "The title of the 404 page"
   },
   "theme.NotFound.p1": {
-    "message": "找不到你要访问的页面，要不点点别处看看？",
+    "message": "找不到你要访问的页面，或者可能是个Bug...",
     "description": "The first paragraph of the 404 page"
   },
   "theme.NotFound.p2": {
-    "message": "或者可能是个Bug",
+    "message": "肥肠抱歉，要不点点别处看看？",
     "description": "The 2nd paragraph of the 404 page"
   },
   "theme.AnnouncementBar.closeButtonAriaLabel": {

@@ -44,7 +44,7 @@ Celery is a project with minimal funding, so we don’t support Microsoft Window
 
 Celery的架构由三部分组成，消息中间件（message broker）、任务执行单元（worker）和 任务执行结果存储（task result store）组成。
 
-![img](https://tva1.sinaimg.cn/large/007S8ZIlgy1ggqw0f7bltj30q80c174d.jpg)
+![image-20210410100828644](https://gitee.com/JqM1n/biog-image/raw/master/20210410100828.png)
 
 #### 消息中间件
 

@@ -52,6 +52,11 @@ module.exports = {
           position: "right",
           items: [
             {
+              label: "基础",
+              // position: "right",
+              to: "docs/note/pythonBasics/str常用操作/pythonBasics-str1",
+            },
+            {
               label: "前端",
               // position: "right",
               to: "docs/note/frontEnd/http/http01",
@@ -61,6 +66,11 @@ module.exports = {
               // position: "right",
               to: "docs/note/pythonBackend/python三大框架/pythonBackend-1",
             },
+            {
+              label: "linux",
+              // position: "right",
+              to: "docs/note/linux/基本指令/linux-basic1",
+            },
           ],
         },
         {
@@ -68,20 +78,8 @@ module.exports = {
           position: "right",
           items: [
             {
-              label: "python",
-              to: "tags/python",
-            },
-            {
-              label: "linux",
-              to: "tags/linux",
-            },
-            {
-              label: "git",
-              to: "tags/git",
-            },
-            {
-              label: "随笔",
-              to: "tags/随笔",
+              label: "全部分类",
+              to: "tags",
             },
           ],
         },

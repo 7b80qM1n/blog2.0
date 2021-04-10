@@ -1,50 +1,38 @@
 ---
-slug: blog/git整理
 
-title: "git整理" 
+id: Assorted-git整理
 
-author: 庆民gg
-
-tags: [git,]
-
-
-
+title: git整理
 ---
 
 
-
-#####
-
-import useBaseUrl from '@docusaurus/useBaseUrl';
-
 >完成 协同开发 项目，帮助程序员整合代码
 
->>帮助开发者合并开发的代码
+>帮助开发者合并开发的代码
 
->>>如果出现冲突代码的合并，会提示后提交合并代码的开发者，让其解决冲突
+>如果出现冲突代码的合并，会提示后提交合并代码的开发者，让其解决冲突
 
-软件：SVN 、 GIT（都是同一个人的个人项目）
-	github、gitee（两个采用git版本控制器管理代码的公共平台）
+## git与svn比较
+
+SVN 、 GIT（都是同一个人的个人项目）
+
+github、gitee（两个采用git版本控制器管理代码的公共平台）
 
 git：集群化、多分支
-
-<!-- truncate -->
-
-#### git与svn比较
 
 ![image-20210329145632325](https://gitee.com/JqM1n/biog-image/raw/master/20210329145639.png)
 
 ![image-20210329145712980](https://gitee.com/JqM1n/biog-image/raw/master/20210329145713.png)
 
-#### git的工作流程
+## git的工作流程
 
 ![image-20210329145749139](https://gitee.com/JqM1n/biog-image/raw/master/20210329145749.png)
 
-#### git分支管理
+## git分支管理
 
 ![image-20210329145833113](https://gitee.com/JqM1n/biog-image/raw/master/20210329145833.png)
 
-#### 安装
+## 安装
 
 ```
 1.下载对应版本：https://git-scm.com/download
@@ -78,7 +66,7 @@ const.py
 
 
 
-### remote源操作
+## remote源操作
 
 ```shell
 """
@@ -123,7 +111,7 @@ eg: git remote remove origin
 码云线上添加公钥：项目仓库 => 管理 => 部署公钥管理 => 添加公钥 => 添加个人公钥
 ```
 
-##### 如何成为其他码云项目的开发者
+### 如何成为其他码云项目的开发者
 
 ```python
 """
@@ -133,7 +121,7 @@ eg: git remote remove origin
 """
 ```
 
-##### 如何成为公司自建git服务器的开发者
+### 如何成为公司自建git服务器的开发者
 
 ```python
 """
@@ -201,11 +189,9 @@ eg: git remote remove origin
 """
 ```
 
-
-
 ### 远程仓库回滚
 
-```
+```shell
 用dev分支举例
 1）本地切换到远程要回滚的分支对应的本地分支
 git checkout dev

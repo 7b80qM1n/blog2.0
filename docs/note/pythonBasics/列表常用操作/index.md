@@ -182,3 +182,39 @@ for i in range(len(l1)):
 print(l2)
 ```
 
+## 列表推导式
+
+用一行代码去构建一个比较复杂，有规律的列表
+
+列表推导式分为两种模式：
+
+1. 循环模式：[变量(加工的变量) for 变量 in iterable]
+
+   将10以内所有整数的平方写入列表。
+
+   ```python
+   l1 = [i ** 2 for i in range(1, 11)]
+   print(l1)
+   ```
+
+2. 筛选模式：[变量(加工的变量) for 变量 in iterable if 条件]
+
+   筛选模式就是在上面的基础上加上一个判断条件，将满足条件的变量留到列表中。
+
+   1. 三十以内可以被三整除的数。
+
+   ```python
+   multiples = [i for i in range(30) if i % 3 == 0]
+   print(multiples)
+   ```
+
+   2. 找到嵌套列表中名字含有两个‘e’的所有名字（有难度）
+
+   ```python
+   names = [['Tom', 'Billy', 'Jefferson', 'Andrew', 'Wesley', 'Steven', 'Joe'],
+            ['Alice', 'Jill', 'Ana', 'Wendy', 'Jennifer', 'Sherry', 'Eva']]
+   
+   print([name for lst in names for name in lst if name.count('e') >= 2])  # 注意遍历顺序，这是实现的关键
+   ```
+
+   

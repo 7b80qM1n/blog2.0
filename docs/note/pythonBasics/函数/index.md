@@ -2,7 +2,7 @@
 
 id: pythonBasics-function1
 
-title: 函数
+title: 函数 + f-strings
 ---
 
 ## 作用
