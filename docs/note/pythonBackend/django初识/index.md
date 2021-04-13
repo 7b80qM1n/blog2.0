@@ -3,45 +3,72 @@
 id: pythonBackend-django01
 
 title: django初识
-
 ---
 
-## django基本操作
+
+
+
+## 创建django
+
+### 命令行操作
+
+1. 创建django项目
+
+   ```python
+   # 可以先切换到对应的盘
+   django-admin startproject 项目名
+   ```
+
+   目录结构
+
+   ```python
+   """
+        ├──项目名文件夹
+            ├──manage.py         django入口文件
+            ├──db.sqlite3        django自带的小型数据库
+            ├──项目名文件夹
+                ├──settings.py   配置文件
+                ├──urls.py      路由与视图函数对应关系（路由层）
+                └──wsgi.py      wsgiref模块
+            ├──app01文件夹
+                ├──admin.py             django后台管理
+                ├──apps.py              注册使用
+                ├──mingrations文件夹    数据库迁移记录
+                    ├──models.py       数据库相关的 模型类（orm）
+                    ├──tests.py        测试文件
+                    └──views.py        视图函数（视图层）
+        """
+   ```
+
+2. 启动django项目
+
+   ```python
+   # 先切换到项目目录下   cd /项目名
+   python3 manage.py runserver   # http://127.0.0.1:8000/
+   ```
+
+3. 创建应用
+
+   ```python
+   "Next,start your first app by running python manage.py startapp [ app_label]."
+   python manage.py startapp 应用名
+   ```
+
+### pycharm操作
+
+创建应用
+
+1. pycharm左下角的Terminal用命令创建
+2. pycharm上方选项中的`Tools-Run>manage.py>Task...( Ctrl + Alt + R )`
+
+### 命令行和pycharm创建的区别
+
+命令行创建不会自动有templates文件夹 需要你手动创建
+
+pycharm会自动帮你创建 并且还会自动在配置文件中配置对应的路径
 
 ```python
-# 命令行操作
-     1.创建django项目
-     # 可以先切换到对应的盘
-     django-admin startproject 项目名
-     """
-     ├──项目名文件夹
-         ├──manage.py         django入口文件
-         ├──db.sqlite3        django自带的小型数据库
-         ├──项目名文件夹
-             ├──settings.py   配置文件
-             ├──urls.py      路由与视图函数对应关系（路由层）
-             └──wsgi.py      wsgiref模块
-         ├──app01文件夹
-             ├──admin.py             django后台管理
-             ├──apps.py              注册使用
-             ├──mingrations文件夹    数据库迁移记录
-                 ├──models.py       数据库相关的 模型类（orm）
-                 ├──tests.py        测试文件
-                 └──views.py        视图函数（视图层）
-     """
-     2.启动django项目
-     # 先切换到项目目录下   cd /项目名
-        python3 manage.py runserver   # http://127.0.0.1:8000/
-	# 创建应用
-    "Next,start your first app by running python manage.py startapp [ app_label]."
-     python manage.py startapp 应用名
-# pycharm操作
-    # 创建应用
-    1.pycharm左下角的Terminal用命令创建
-    2.pycharm上方选项中的Tools-Run manage.py Task...( Ctrl + Alt + R )
-# 命令行和pycharm创建的区别
-    1.命令行创建不会自动有templates文件夹 需要你手动创建 而pycharm会自动帮你创建 并且还会自动在配置文件中配置对应的路径
-    TEMPLATES = [
+TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
         'DIRS': [os.path.join(BASE_DIR, 'templates')]    # 这里帮你拼接了templates的路径 如果是命令行创建的需要手动添加
@@ -102,8 +129,9 @@ STATICFILES_DIRS = [
 
 ## 应用
 
+应用创建后需要在配置文件setting中注册
+
 ```python
-# ******应用创建后需要在配置文件setting中注册******
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -118,31 +146,52 @@ INSTALLED_APPS = [
 
 ## django小白必会三板斧
 
+### HttpResponse
+
+返回字符串类型的数据
+
 ```python
-#  先在urls.py中添加  然后在views.py 最后在html页面输入{{ 需要拿的数据变量名 }}
-HttpResponse
-    返回字符串类型的数据
-    return HttpResponse('这里是返回字符串类型的哦可以写字符串在这里')
-render
-    返回html文件的
-    return render(request,'xxx.html')  # 自动去templates文件夹下帮你查找文件
-    # 传值的两种方式
-    # 第一种  更加的精确 节省资源 需要谁就传谁
-    user_dict = {'user':'jqm','pwd':'jqmkfc'}
-    return render(request,'xxx.html',{'data':user_dict.'mmm':123}) #接下来在html文件中{{ data }}的形式就可以获取值
-    # 第二种  当你要传的数据特别多的时候用这个
-    return render(request,'xxx.html',locals())  # locals会将名称空间中所有的局部变量传递给html页面
-redirect
-    重定向
-        return redirect('https://www.baidu.com')  # 跳转到别人的网址
-        return redirect('/home/')    # 跳自己的时候可以不用加ip和端口 
-        # redirect括号内可以直接写url 也可以写别名 如果你的别名需要额外给参数的话那么就必须使用reverse解析了
+return HttpResponse('这里是返回字符串类型的哦可以写字符串在这里')
 ```
 
-## request对象初识
+### render
+
+返回html文件的
 
 ```python
-# 在前期我们使用django提交post请求的时候 需要去配置文件中注释掉一行代码 否则会报403
+return render(request,'xxx.html')  # 自动去templates文件夹下帮你查找文件
+```
+
+传值的两种方式
+
+1. 更加的精确 节省资源 需要谁就传谁
+
+   ```python
+   user_dict = {'user':'jqm','pwd':'jqmkfc'}
+   return render(request,'xxx.html',{'data':user_dict.'mmm':123}) # 接下来在html文件中{{ data }}的形式就可以获取值
+   ```
+
+2. 当你要传的数据特别多的时候用这个
+
+   ```python
+   return render(request,'xxx.html',locals())  # locals会将名称空间中所有的局部变量传递给html页面
+   ```
+
+### redirect
+
+重定向
+
+```python
+return redirect('https://www.baidu.com')  # 跳转到别人的网址
+return redirect('/home/')    # 跳自己的时候可以不用加ip和端口 
+# redirect括号内可以直接写url 也可以写别名 如果你的别名需要额外给参数的话那么就必须使用reverse解析了       
+```
+
+## 中间件介绍
+
+在前期我们使用django提交post请求的时候 需要去配置文件中注释掉一行代码 否则会报403
+
+```python
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',  # 一些安全设置，比如XSS脚本过滤、ssl重定向
     'django.contrib.sessions.middleware.SessionMiddleware',  # 会在数据库中生成一个django_session的表
@@ -152,8 +201,11 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',   # 消息中间件。展示一些后台信息给前端页面。如果需要用到消息，还需要在INSTALLED_APPS中添加django.contrib.message才能有效。如果不需要，可以把这两个都删除。
     'django.middleware.clickjacking.XFrameOptionsMiddleware',  # 防止通过浏览器页面跨Frame出现clickjacking（欺骗点击）攻击出现
 ]
+```
 
-*********************************************************************
+## request对象初识
+
+```python
 request.method  # 返回请求方式并且是 全大写 的 字符串 形式<class 'str'>
 request.POST    # 获取用户post请求提交的普通数据不包含文件
     request.POST.get()      # 只获取列表最后一个元素
@@ -182,98 +234,130 @@ def login(request):
 
 ## Django链接数据库(MySQL)
 
+默认用的是sqlite3
+
 ```python
-# 默认用的是sqlite3
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
     }
 }
-# django链接MySQL
-1.第一步配置文件中的配置
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'day60',
-        'USER': 'root',
-        'PASSWORD': 'jqmkfc039988',
-        'HOST': '127.0.0.1',
-        'PORT': 3306,
-        'CHARSET': 'utf8'
-    }
-}
-2.代码声明
-    django默认用的是mysqldb模块链接MySQL
-    但是该模块的兼容性不好 需要手动改为用pymysql链接
-    # 在项目名下的 init.py 或者任意的应用名下的init文件中书写以下代码即可
-    import pymysql
-    pymysql.install_as_MySQLdb()
 ```
 
-### Django ORM
+### django链接MySQL
+
+1. 第一步配置文件中的配置
+
+   ```python
+   DATABASES = {
+       'default': {
+           'ENGINE': 'django.db.backends.mysql',
+           'NAME': 'day60',
+           'USER': 'root',
+           'PASSWORD': 'jqmkfc039988',
+           'HOST': '127.0.0.1',
+           'PORT': 3306,
+           'CHARSET': 'utf8'
+       }
+   }
+   ```
+
+2. 代码声明
+
+   django默认用的是mysqldb模块链接MySQL，但是该模块的兼容性不好 需要手动改为用pymysql链接
+
+   在项目名下的 init.py 或者任意的应用名下的init文件中书写以下代码即可
+
+   ```python
+   import pymysql
+   pymysql.install_as_MySQLdb()
+   ```
+
+## Django ORM
 
 ```python
+"""
 ORM 对象关系映射
 作用:能够让一个不用sql语句的小白也能够通过python面向对象的代码简单快捷的操作数据库
 不足之处:封装程度太高有时候sql语句的效率偏低需要你自己写sQL语句
     类    --->  表
     对象  --->  记录
 对象属性  --->  记录某个字段对应的值
-***************************************************************
-第一步: 在models.py下书写
-# verbose_name='对字段的一个解释' 都可以加
-class User(models.Model):
-    # id int primary_key auto_increment
-    # 由于一张表中必须要有一个主键字段并且一般情况下都叫id字段
-    # 所以orm当你不定义主键字段的时候orm会自动帮你创建一个名为id主键字段
-    # #也就意味着后续我们在创建模型表的时候如果主键字段名没有额外的叫法那么主键字段可以省略不写
-    id = models.AutoField(primary_key=True)
-    # username varchar(32)  CharField必须指定max_length参数 不指定会报错
-    username = models.CharField(max_length=32)
-    # password int
-    password = models.IntegerField()
-    # price 小数 max_digits=8 decimal_places=2 总共8位 小数点后面占2位
-    price = models.DecimalField(max_digits=8, decimal_places=2)
-    # auto_now_add=True  每一次数据创建出来 这个字段会自动更新  多用于注册时间 上次登录时间
-    publish_data = models.DateField(auto_now_add=True)
-第二步: 数据库迁移命令
-python manage.py makemigrations 将操作记录记录到小本本上(makemigrations文件夹)
-python manage.py migrate        将操作真正的同步到数据库中
-# 只要你修改了models.py中跟数据库相关的代码 上述两条命令就要重新执行一次
+"""
 ```
 
-### 编辑功能
+1.  在models.py下书写
+
+   ```python
+   # verbose_name='对字段的一个解释' 都可以加
+   class User(models.Model):
+       # id int primary_key auto_increment
+       # 由于一张表中必须要有一个主键字段并且一般情况下都叫id字段
+       # 所以orm当你不定义主键字段的时候orm会自动帮你创建一个名为id主键字段
+       # 也就意味着后续我们在创建模型表的时候如果主键字段名没有额外的叫法那么主键字段可以省略不写
+       id = models.AutoField(primary_key=True)
+       # username varchar(32)  CharField必须指定max_length参数 不指定会报错
+       username = models.CharField(max_length=32)
+       # password int
+       password = models.IntegerField()
+       # price 小数 max_digits=8 decimal_places=2 总共8位 小数点后面占2位
+       price = models.DecimalField(max_digits=8, decimal_places=2)
+       # auto_now_add=True  每一次数据创建出来 这个字段会自动更新  多用于注册时间 上次登录时间
+       publish_data = models.DateField(auto_now_add=True)
+   ```
+
+2. 数据库迁移命令
+
+   ```python
+   python manage.py makemigrations  # 将操作记录记录到小本本上(makemigrations文件夹)
+   python manage.py migrate         # 将操作真正的同步到数据库中
+   # 只要你修改了models.py中跟数据库相关的代码 上述两条命令就要重新执行一次
+   ```
+
+#### 案例:
+
+编辑功能:点击编辑按钮朝后端发送编辑数据的请求
+
+先将数据库中的数据全部展示到前端 然后给每一个数据两个按钮 编辑和删除
 
 ```python
-# 先将数据库中的数据全部展示到前端 然后给每一个数据两个按钮 编辑和删除
-    模板语法 
-    {% for x in x %} 
-        <tr><td>...<a href='/edit_user/?user_id={{ user_obj.id }}'>编辑</a>
-                   <a href='/delete_user/?user_id={{ user_obj.id }}'>删除</a>
-    {% endfor %}
-# 编辑功能
-    # 点击编辑按钮朝后端发送编辑数据的请求
-    # 问题：如何告诉后端用户想要编辑哪条数据？
-        # 1.将编辑按钮所在的那一行数据的主键值发送给后端
-        # 2.利用url问号后面携带参数的方式
-        def edit_user(request):
-            # 获取url问号后面的参数
-            edit_id = requrst.GET.get('user_id')
-            # 查询当前用户想要编辑的数据id
-            edit_obj = models.User.objects.filter(id=edit_id).first()
-            if request.method == 'POST':
-                username = request.POST.get('username')  # 当前需要拿到的就username一个数据 所以用get
-                password = request.POST.get('password')  
-                # 去数据库中修改对应的数据内容
-                models.User.objects.filter(id=edit_id).update(username=username,password=password)
-                # 跳转到数据的展示页面(重定向)
-                return redirect('/userlist/')
-            # 将数据对象展示到编辑页面上(和注册页面差不多 主要是有input框输入和能提交数据)
-            return render(request, 'edit_user.html', locals())     
-# 删除功能
-# 删除数据内部其实并不是真正的删除我们会给数据添加一个标识字段用来表示当前数据是否被删除了 
-# 如果数据被删了仅仅只是将字段修改一个状态 is_delete中的Flase改成True而已
+'模板语法' 
+{% for x in x %} 
+    <tr><td>...<a href='/edit_user/?user_id={{ user_obj.id }}'>编辑</a>
+    <a href='/delete_user/?user_id={{ user_obj.id }}'>删除</a>
+{% endfor %}
+```
+
+问题：如何告诉后端用户想要编辑哪条数据？
+
+1. 将编辑按钮所在的那一行数据的主键值发送给后端
+2. 利用url问号后面携带参数的方式
+
+```python
+def edit_user(request):
+    # 获取url问号后面的参数
+    edit_id = requrst.GET.get('user_id')
+    # 查询当前用户想要编辑的数据id
+    edit_obj = models.User.objects.filter(id=edit_id).first()
+    if request.method == 'POST':
+        username = request.POST.get('username')  # 当前需要拿到的就username一个数据 所以用get
+        password = request.POST.get('password')
+        # 去数据库中修改对应的数据内容
+        models.User.objects.filter(id=edit_id).update(username=username, password=password)
+        # 跳转到数据的展示页面(重定向)
+        return redirect('/userlist/')
+    # 将数据对象展示到编辑页面上(和注册页面差不多 主要是有input框输入和能提交数据)
+    return render(request, 'edit_user.html', locals())    
+```
+
+删除功能
+
+删除数据内部其实并不是真正的删除，仅仅只是将字段修改一个状态
+
+我们会给数据添加一个标识字段用来表示当前数据是否被删除 例如`is_delete`中的Flase改成True
+
+```python
 def delete_user(request):
     # 获取用户想要删除的数据id值
     delete_id = request.GET.get('user_id')
@@ -283,11 +367,13 @@ def delete_user(request):
     return redirect('/userlist/')   
 ```
 
-### orm创建表关系
+## orm创建表关系
+
+在django1.x版本中外键默认就是级联更新删除的 
+
+在django2.x版本中外键需要加上 on_delete=models.CASCADE null=True
 
 ```python
-# 在django1.x版本中外键默认就是级联更新删除的 
-# 在django2.x版本中外键需要加上 on_delete=models.CASCADE null=True
 # 一对多ForeignKey 一般都是在多的一方创建外键 ForeignKey会自动给字段加_id后缀 
 publish = models.ForeignKey(to='Publish') # to='关联的表名(类的名)' 
 # 多对多ManyToManyField  authors是一个虚拟字段 主要是用来告诉orm xx和xx是多对多关系 让orm自动帮你创建第三张关系表
@@ -298,47 +384,61 @@ author_detail = models.OneToOneField(to='AuthorDetail')
 
 ### 多对多三种创建方式
 
+全自动：利用orm自动帮我们创建第三张关系表
+
 ```python
-# 全自动：利用orm自动帮我们创建第三张关系表
-    class Book(models.Model):
-        name = models.CharField(max_length=32)
-        authors = models.ManyToManyField(to='Author')
-        
-    class Author(models.Model):
-        name = models.CharField(max_length=32)
-    ""
-    优点：代码不需要你写 非常的方便 还支持orm提供操作第三张关系表的方法
-    缺点：第三种关系表的扩展性极差（没有办法额外添加字段）
-    ""
-# 纯手动
-    class Book(models.Model):
-        name = models.CharField(max_length=32)
-        
-    class Author(models.Model):
-        name = models.CharField(max_length=32)
-        
-    class Book2Author(models.Models):
-        book_id = models.ForeignKey(to='Book')
-        author_id = models.ForeignKey(to='Author')
-# 半自动   可以试用orm的正反向查询 但是没法使用add,set,remove,clear这四个方法
-    class Book(models.Model):
-        name = models.CharField(max_length=32)
-        authors = models.ManytoManyField(to='Author', 
-                                            through='Book2Author',
-                                            through_fields=('book ', 'author ')
-                                            )# through_fields参数顺序 当前的表是谁 就把对应的关联字段放在前面
-    # 判断的本质是通过第三张表查询对应的表 需要用到哪个字段就把哪个字段放前面
-    class Author(models.Model):
-        name = models.CharField(max_length=32)
-        
-    class Book2Author(models.Models):
-        book = models.ForeignKey(to='Book')
-        author = models.ForeignKey(to='Author')
-        
-# 总结：你需要掌握的是全自动和半自动 为了拓展性更高 一般都使用半自动 不过只是查询的时候省事了 有需要的话还是全手动吧 
+class Book(models.Model):
+    name = models.CharField(max_length=32)
+    authors = models.ManyToManyField(to='Author')
+
+class Author(models.Model):
+    name = models.CharField(max_length=32)
+""
+优点：代码不需要你写 非常的方便 还支持orm提供操作第三张关系表的方法
+缺点：第三种关系表的扩展性极差（没有办法额外添加字段）
+""
 ```
 
-### 分页器
+纯手动
+
+```python
+class Book(models.Model):
+    name = models.CharField(max_length=32)
+
+
+class Author(models.Model):
+    name = models.CharField(max_length=32)
+
+
+class Book2Author(models.Models):
+    book_id = models.ForeignKey(to='Book')
+    author_id = models.ForeignKey(to='Author')
+```
+
+半自动 可以试用orm的正反向查询 但是没法使用add,set,remove,clear这四个方法
+
+```python
+class Book(models.Model):
+    name = models.CharField(max_length=32)
+    authors = models.ManytoManyField(to='Author',
+                                     through='Book2Author',
+                                     through_fields=('book ', 'author ')
+                                     )  # through_fields参数顺序 当前的表是谁 就把对应的关联字段放在前面
+
+
+# 判断的本质是通过第三张表查询对应的表 需要用到哪个字段就把哪个字段放前面
+class Author(models.Model):
+    name = models.CharField(max_length=32)
+
+
+class Book2Author(models.Models):
+    book = models.ForeignKey(to='Book')
+    author = models.ForeignKey(to='Author')    
+```
+
+总结：需要掌握的是全自动和半自动 为了拓展性更高 一般都使用半自动 不过只是查询的时候省事了 有需要的话还是全手动吧 
+
+## 分页器
 
 ```python
 "django也有内置的分页器模块 但是功能较少代码繁琐不便于使用 所以我们用自定义的分页器"
@@ -474,23 +574,33 @@ class Pagination(object):
         return ''.join(page_html_list)
 ```
 
-### form组件
+## Form组件
+
+- 生成页面可用的HTML标签
+- 用户提交校验功能
+- 保留上次输入内容
+
+### 校验数据
 
 ```python
-************************************************************************************************
-////////////////////////////// '校验数据'//////////////////////////////
 from django import forms
 class MyForm(forms.Form):
     # 字符串类型 最小三位 最大8位
-    username = forms.CharField(min_length=3, max_length=8, label='用户名', )  'label属性默认是字段首字母大写的形式 可以自定义参数值'
+    username = forms.CharField(min_length=3, max_length=8, label='用户名', )  
+    'label属性默认是字段首字母大写的形式 可以自定义参数值'
     # 同上
-    password = forms.CharField(min_length=3, max_length=8, error_messages={'min_length': '用户名最少3位',
-                         'max_length': '密码最少8位','required': '用户名不能为空'}) # 可用error_messages自定义错误信息 required min_length  max_length
-    # email
+    password = forms.CharField(min_length=3, max_length=8, error_messages={
+        				'min_length': '用户名最少3位',
+                         'max_length': '密码最少8位',
+        				'required': '用户名不能为空'}) 
+    # 可用error_messages自定义错误信息 required min_length  max_length
     email = forms.EmailField(error_messages={'invalid': '邮箱格式不正确'})  # invalid 
+    
 form_obj = MyForm({'username': 'jqm', 'password': '123', 'email': '123'})
-***********************************************************************************************************************************
 print(form_obj.is_valid())   # 判断数据是否合法 只有在数据全部合法的情况下才会返回True
+print(form_obj.cleaned_data)  # 查看所有校验通过的数据 字典
+print(form_obj.errors)       # 查看所有不符合校验和原因  字典
+'校验数据的时候 默认情况下数据可以多传但是绝不能少传'
 # 通过看form组件源码得知必须先执行is_valid()  clean_data和errors才会有值  
 # 源码流程：
 # 1.is_valid()
@@ -501,77 +611,77 @@ print(form_obj.is_valid())   # 判断数据是否合法 只有在数据全部合
     #     value = getattr(self, 'clean_%s' % name)()
     #     self.cleaned_data[name] = value
 #   self._clean_form()      内部会走全局钩子(self.clean())--->self就会有clean_data和errors
-print(form_obj.cleaned_data)  # 查看所有校验通过的数据 字典
-print(form_obj.errors)       # 查看所有不符合校验和原因  字典
-***********************************************************************************************************************************
-'校验数据的时候 默认情况下数据可以多传但是绝不能少传'
-////////////////////////////// '渲染标签'//////////////////////////////
-# form组件只会帮你渲染获取用户输入的标签 input select radio checkbox 不会帮你渲染提交按钮的
+```
+
+### 渲染标签
+
+form组件只会帮你渲染获取用户输入的标签 input select radio checkbox 不会帮你渲染提交按钮的
+
+生成一个空对象，传到前端去
+
+```python
 def index(request):
-    # 生成一个空对象
     form_obj = MyForm()
-    # 传到前端去
     return render(request, 'index.html', locals())
-# 前端用空对象做操作 
-# 第一种方式（代码书写极少，但是封装程度太高 拓展性太差 一般只在本地测试中使用 ）
-{{ form_obj.as_p }}  、  {{ form_obj.as_ul }}  、 {{ form_obj.as_table }}
-# 第二种方式（可拓展性强 但是需要书写的代码太多 一般情况不用）
-<p>{{ form_obj.username.label }}:{{ form_obj.username }}</P>
-<p>{{ form_obj.password.label }}:{{ form_obj.password }}</P>
-<p>{{ form_obj.email.label }}:{{ form_obj.email }}</P>
-'第三种方式（推荐使用 代码书写简单 拓展性也高）'
-{% for form in form_obj %}
-    <p>{{ form.label }}:{{ form }}</p> 
-{% endfor %}
-////////////////////////////// '展示错误信息'//////////////////////////////
-# 浏览器会帮你自动校验 但是前端的校验弱不禁风 可以通过form表单添加novalidate取消浏览器校验
-/////前端/////
-<form action="" method="post" novalidate>
-    {% for form in form_obj %}
-        <p>{{ form.label }}:{{ form }}</p>
-        <span>{{ form.errors.0 }}</span>
-    {% endfor %}
-</form>
-/////后端/////
-from django import forms
-class MyForm(forms.Form):
-    # 字符串类型 最小三位 最大8位
-    username = forms.CharField(min_length=3, max_length=8, label='用户名', )  'label属性默认是字段首字母大写的形式 可以自定义参数值'
-    # 同上
-    password = forms.CharField(min_length=3, max_length=8, error_messages={'min_length': '用户名最少3位',
-                         'max_length': '密码最少8位','required': '用户名不能为空'}) # 可用error_messages自定义错误信息 required min_length  max_length
-    # email
-    email = forms.EmailField(error_messages={'invalid': '邮箱格式不正确', 'required': '邮箱不能为空'})  # invalid 
-def index(request):
-    form_obj = MyForm()
-        if request.method = 'POST':
-        # 校验数据需要字典 但是刚好request.POST就是字典
-            form_obj = MyForm(request.POST)  # 这里post请求的form_obj对象变量名和上面get请求的对象变量名必须一样
-        # 判断数据是否合法
-            if form_obj.is_valid():
-                ...
-            else
-                ...
-            return render(request, 'index.html', locals())
-////////////////////////////// '钩子函数(HOOK)'//////////////////////////////
-在特定的节点自动触发完成相应操作   钩子函数在forms组件中就类似于第二道关卡 能够让我们自定义校验规则
-在forms组件中有两种钩子函数 
-    局部钩子
-        当你需要给某个字段增加校验规则的时候可以使用
-    全局钩子
-        当你需要给多个字段增加校验规则的时候可以使用
-# 实际案例
+```
+
+前端用空对象做操作 
+
+1. 推荐使用 代码书写简单 拓展性也高
+
+   ```html
+   {% for form in form_obj %}
+       <p>{{ form.label }}:{{ form }}</p> 
+   {% endfor %}
+   ```
+
+   
+
+2. 代码书写极少，但是封装程度太高 拓展性太差 一般只在本地测试中使用
+
+   ```python
+   {{ form_obj.as_p }}
+   {{ form_obj.as_ul }}
+   {{ form_obj.as_table }}
+   ```
+
+   
+
+3. 可拓展性强 但是需要书写的代码太多 一般情况不用
+
+   ```python
+   <p>{{ form_obj.username.label }}:{{ form_obj.username }}</P>
+   <p>{{ form_obj.password.label }}:{{ form_obj.password }}</P>
+   <p>{{ form_obj.email.label }}:{{ form_obj.email }}</P>
+   ```
+
+### 钩子函数(HOOK)
+
+钩子函数在forms组件中就类似于第二道关卡 能够让我们自定义校验规则 在特定的节点自动触发完成相应操作
+
+在forms组件中有两种钩子函数
+
+- 局部钩子
+
+  当你需要给某个字段增加校验规则的时候可以使用
+
+- 全局钩子
+
+  当你需要给多个字段增加校验规则的时候可以使用
+
+案例:
+
+```python
 1.校验用户名中不能含有666    # 只是校验username字段 局部钩子
 2.校验密码和确认密码不一致    # 要校验多个 用全局
 from django import forms
 class MyForm(forms.Form):
     username = forms.CharField(min_length=3, max_length=8, error_messages={'min_length': '用户名最少3位',
-                         'max_length': '用户名最少8位','required': '用户名不能为空'})) 
+                         'max_length': '用户名最少8位','required': '用户名不能为空'})
     password = forms.CharField(min_length=3, max_length=8, error_messages={'min_length': '密码最少3位',
                          'max_length': '密码最少8位','required': '密码不能为空'}) 
     confirm_password = forms.CharField(min_length=3, max_length=8, error_messages={'min_length': '确认密码最少3位',
                          'max_length': '确认密码最少8位','required': '确认密码不能为空'})
-    # email
     email = forms.EmailField(error_messages={'invalid': '邮箱格式不正确', 'required': '邮箱不能为空'})  
 # 校验用户名中不能含有666 局部钩子
     def clean_username(self):  # clean_会自动找到字段生成名字  只有通过了上面的校验才会执行这个
@@ -596,10 +706,12 @@ class MyForm(forms.Form):
 
 ```python
 label  # 是自定义字段名
-error_messages   # 自定义报错信息
 initial   # 默认值
 required  # 控制字段是否必填
-widget=forms.widgets.TextInput(attrs={'class': 'form-control xx xx'})  # widget=forms.widgets.TextInput控制type类型 attrs控制属性 多个样式直接空格
+error_messages   # 自定义报错信息
+widget=forms.widgets.TextInput(attrs={
+    'class': 'form-control xx xx'})  
+	# widget=forms.widgets.TextInput控制type类型 attrs控制属性 多个样式直接空格
 
 from django.core.validators import RegexValidator
 validators=[RegexValidator(r'^[0-9]+$', '请输入数字'), RegexValidator(r'^159[0-9]+$', '数字必须以159开头')]   # 支持正则校验
@@ -647,32 +759,56 @@ class LoginForm(forms.Form):
 
 ## cookie和session
 
-### cookie
+### cookie的由来
+
+都知道HTTP协议是无状态的，无状态的意思是每次请求都是独立的，它的执行情况和结果与前面的请求和之后的请求都无直接关系，它不会受前面的请求响应情况直接影响，也不会直接影响后面的请求响应情况。
+
+一句有意思的话来描述就是人生只如初见，对服务器来说，每次的请求都是全新的。
+
+状态可以理解为客户端和服务器在某次会话中产生的数据，那无状态的就以为这些数据不会被保留。会话中产生的数据又是我们需要保存的，也就是说要“保持状态”。因此Cookie就是在这样一个场景下诞生。
+
+cookie就是保存在客户端浏览器上的信息 下次访问服务器时浏览器会自动携带这些键值对，以便服务器提取有用信息
+
+### 什么是Cookie
+
+Cookie具体指的是一段小信息，它是服务器发送出来存储在浏览器上的一组组键值对，下次访问服务器时浏览器会自动携带这些键值对，以便服务器提取有用信息。
+
+### Cookie的原理
+
+cookie的工作原理是：由服务器产生内容，浏览器收到请求后保存在本地；当浏览器再次访问时，浏览器会自动带上Cookie，这样服务器就能通过Cookie的内容来判断这个是“谁”了。
+
+### 查看Cookie
+
+![867021-20180403225926558-498750585](https://gitee.com/JqM1n/biog-image/raw/master/20210413150711.png)
+
+django操作cookie 需要借助HttpResponse对象
 
 ```python
-cookie就是保存在客户端浏览器上的信息 表现形式一般都是k:v键值对
-django操作cookie 需要借助HttpResponse对象
 # 设置cookie
-    obj.set_cookie(key,value)
+obj.set_cookie(key,value)
 # 加盐设置
-    obj.set_signed_cookie(key,value,salt='盐')
+obj.set_signed_cookie(key,value,salt='盐')
 # 获取cookie
-    request.COOKIES.get(key)
+request.COOKIES.get(key)
 # 加盐获取
-    request.get_signed_cookie(key,salt='盐')
+request.get_signed_cookie(key,salt='盐')
 # 设置cookie的时候可以添加一个超时时间
-    obj.set_cookie('username', '456', max_age=5, expires=5)    # 都是以秒为单位 expires是针对IE浏览器
+obj.set_cookie('username', '456', max_age=5, expires=5)    # 都是以秒为单位 expires是针对IE浏览器
 # 主动删除cookie （注销功能）
-    obj.delete_cookie('username')
+obj.delete_cookie('username')
 ```
 
-### session
+### session由来
+
+Cookie弥补了HTTP无状态的不足，让服务器知道来的人是“谁”，但是Cookie以文本的形式保存在本地，自身安全性较差，所以我们就通过Cookie识别不同的用户，对应的在Session里保存私密的信息以及超过4096字节的文本。
+
+session就是保存在服务端上的信息，也可以在其他地方储存，表，文件，缓存等等...表现形式一般都是k:v键值对(可以有多个)，需要基于cookie才能工作
+
+给客户端返回的是一个随机的字符串    sessionid:"随机字符串"
+
+默认情况下session需要django一张diango_session表  数据迁移命令后会自动生成  django默认session的过期时间是14天
 
 ```python
-session就是保存在服务端上的信息，也可以有很多地方储存 表 文件 缓存 其他...  表现形式一般都是k:v键值对（可以有多个） 需要基于cookie才能工作
-给客户端返回的是一个随机的字符串    sessionid:随机字符串
-在默认情况下session是需要djangom默认的一张diango_session表  数据迁移命令后会自动生成  django默认session的过期时间是14天  
-
 # 设置过期时间
 request.session.set_expiry() # 括号内可以放  整数(秒为单位) 日期对象（datetime/timedelta） 不写就是默认的14天
 # 清除session
@@ -696,7 +832,7 @@ request.session.get('key')
 3.如果比对上了 则将对应的数据取出并以字典的形式封装到request.session中 如果比对不上 则request.session.get() 返回的是None
 ```
 
-### CBV添加装饰器的三种方式
+## CBV添加装饰器的三种方式
 
 ```python
 from django.utils.decorators import method_decorator
@@ -725,28 +861,64 @@ django中间件能做的事情
     只要是涉及到项目全局的功能，你就要想到中间件 
     全局身份校验 全局访问频率校验 全局权限校验 ...
 //////////////////////////////'必须掌握'/////////////////////////////
-'process_request'
-    1.请求来的时候需要经过每一个中间件里面的process_request方法 结果的顺序是按照配置文件中注册的中间件的顺序从上往下依次执行
-    2.如果中间件里面没有自定义的方法，那么直接跳过执行下一个中间件
-    3.如果该方法返回了HttpResponse对象，那么请求将不再继续往后执行 而是直接原路返回（校验失败不允许访问...） 
-    process_request方法就是用来做全局相关的所有限制功能  （比如没登录 黑名单 ...）
-'process_response'
-    1.响应走的时候需要经过每一个中间件里面的process_response方法 该方法有两个额外的参数request和response
-    2.该方法必须返回一个HttpResponse对象 默认返回的就是response对象 
-        也可以返回自己的 返回后就会不管后面的视图函数返回的是什么 都会变成这里设置返回的  （狸猫换太子）
-    3.顺序是按照配置文件中的注册了的中间件从下往上依次经过 如果你没有定义的话 直接跳过执行下一个
+''
+    1.
+    2.
+    3.
+    
+''
+    1.
+    2.
+        
+    3.
 ******'如果在第一个process_request方法就已经返回了HttpReponse对象，那么响应走的时候就会直接走同级别的process_response返回'******
-flask框架也有一个中间件但是它的规律是只要返回数据了就必须经过所有中间件里面类似process_response的方法
+
 --------------------------------------------------------------------------------
-2.了解即可 
-    process_view
-        路由匹配成功之后视图函数之前，会自动执行中间件里面的该方法 顺序是按照配置文件中的注册了的中间件从上往下的顺序依次执行
-    process_template_reponse  参数 request,response
-        返回的是HttpResonse对象有render属性的时候才会触发 顺序是按照配置文件中注册了的中间件从下往下往上的顺序依次执行
-    process_exception  参数 request,exception
-        当视图函数出现异常的情况下触发 顺序是按照配置文件中注册了的中间件从下往下往上的顺序依次执行
+
 """
 ```
+
+### process_request
+
+1. 请求来的时候需要经过每一个中间件里面的`process_request`方法 结果的顺序是按照配置文件中注册的中间件的顺序从上往下依次执行
+2. 如果中间件里面没有自定义的方法，那么直接跳过执行下一个中间件
+3. 如果该方法返回了`HttpResponse`对象，那么请求将不再继续往后执行 而是直接原路返回（校验失败不允许访问...） 
+
+`process_request`方法就是用来做全局相关的所有限制功能  （比如没登录 黑名单 ...）
+
+### process_response
+
+1. 响应走的时候需要经过每一个中间件里面的`process_response`方法 该方法有两个额外的参数`request`和`response`
+
+2. 该方法必须返回一个`HttpResponse`对象 默认返回的就是`response`对象 
+
+   也可以返回自己的 返回后就会不管后面的视图函数返回的是什么 都会变成这里设置返回的  （狸猫换太子）
+
+3. 顺序是按照配置文件中的注册了的中间件从下往上依次经过 如果你没有定义的话 直接跳过执行下一个
+
+如果在第一个`process_request`方法就已经返回了`HttpReponse`对象，那么响应走的时候就会直接走同级别的`process_response`返回
+
+![1456293-20181122210746781-506914822](https://gitee.com/JqM1n/biog-image/raw/master/20210413163338.png)
+
+flask框架也有一个中间件但是它的规律是只要返回数据了就必须经过所有中间件里面类似`process_response`的方法
+
+### 了解知识点
+
+### process_view
+
+路由匹配成功之后视图函数之前，会自动执行中间件里面的该方法 顺序是按照配置文件中的注册了的中间件从上往下的顺序依次执行
+
+### process_template_reponse  
+
+参数 request,response
+
+返回的是`HttpResonse`对象有`render`属性的时候才会触发 顺序是按照配置文件中注册了的中间件从下往下往上的顺序依次执行
+
+### process_exception
+
+参数 request,exception
+
+当视图函数出现异常的情况下触发 顺序是按照配置文件中注册了的中间件从下往下往上的顺序依次执行
 
 ### 如何自定义中间件
 
@@ -754,7 +926,8 @@ flask框架也有一个中间件但是它的规律是只要返回数据了就必
 """
 1.在项目名或者应用名下创建一个任意名称的文件夹
 2.在该文件内创建一个任意名称的py文件
-3.在该py文件内需要书写类 （这个类必须继承MiddlewareMixin）在类里面定义五个方法即可 
+3.在该py文件内需要书写类 （这个类必须继承MiddlewareMixin）
+from django.utils.deprecation import MiddlewareMixin 在类里面定义五个方法即可 
 4.需要将类的路径以字符串的形式注册到配置文件中才能生效
 MIDDLEWARE = ['django.midd...']
 """
@@ -763,7 +936,7 @@ MIDDLEWARE = ['django.midd...']
 ## csrf跨站请求伪造
 
 ```javascript
-<!--
+/*
 钓鱼网站： 搭建一个跟正规网站一模一样的界面 用户不小心进入钓鱼网站 给某人账户打钱 钱确实是提交给了银行的系统 但是打钱的账户变成了一个莫名其妙的账户
 内部本质： 在钓鱼网站的页面 针对对方账户 只给用户提供一个没有name属性的普通input框 然后我们在内部隐藏一个已经写好name和valuee的input框
 如何规避上述问题：csrf请求伪造校验 
@@ -771,7 +944,7 @@ MIDDLEWARE = ['django.midd...']
     当这个页面朝后端发送post请求的时候 我们后端会先校验唯一标识 如果唯一标识校验不对 则会直接拒绝 （403 forbbiden）
 form表单如何符合校验：
     在form页面添加一个 {% csrf_token %}
--->
+*/
 ajax如何符合校验：
 {% load static %}  // 第三种方式
 <script src="{% static 'js/mysetup.js' %}"></script>  // 自己创建一个js文件把js代码放进去 放在static文件夹的文件夹下 比如js文件夹下的mysetup.js
