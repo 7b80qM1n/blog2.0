@@ -1031,13 +1031,21 @@ class MyCsrfToken(View):
 
 ### Auth模块功能
 
+django在启动之后就可以直接admin路由，需要输入用户名和密码，数据参考的就是auth_user表，并且还必须是管理员用户才能进入
+
+创建超级用户（管理员）
+
 ```python
-'django在启动之后就可以直接admin路由，需要输入用户名和密码，数据参考的就是auth_user表，并且还必须是管理员用户才能进入'
-python manage.py createsuperuser   # 创建超级用户（管理员）
-///////////////////'auth提供的方法'//////////////////////
+python manage.py createsuperuser
+```
+
+auth提供的方法
+
+```python
 from django.contrib import auth
 # 自动获取表并比对密码（登陆功能）  1.自动查找auth_user标签  2.自动给密码加密再比对 PS：必须同时传入用户名和密码 不能只传一个
-user_obj = auth.authenticate(request, username=username, password=password)    # 有返回值 返回的是用户对象 如果密码比对不上 返回None
+user_obj = auth.authenticate(request, username=username, password=password)    
+# 有返回值 返回的是用户对象 如果密码比对不上 返回None
 print(user_obj .username) # 当前登陆的用户的用户名 
 # 保存用户状态  执行该方法后就可以在任何地方通过request.user获取到当前登陆的对象
 auth.login(request, user_obj )  # 类似于session的设置  request.session[key] = user_obj 
@@ -1050,8 +1058,11 @@ from django.contrib.auth.models import User
 User.object.create_user(username=username, password=password)
 # 创建超级用户
 python manage.py createsuperuser
+```
 
-/////////////////'auth提供的登陆认证装饰器'////////////////
+auth提供的登陆认证装饰器
+
+```python
 from django.contrib.auth.decorators import login_required
 @login_required(login_url='/login/')  # 局部配置 用户没有登陆跳转到login_url指定的网址
 def set_password(request):
