@@ -6,7 +6,7 @@ title: Django Rest Framework
 ---
 
 ## web的两种开发模式
-  
+
 - 前后端分离: 只专注于写后端接口，返回json，xml格式数据
   - 业务服务器和静态服务器是分开的
   - ![image-20201107194712199](https://gitee.com/JqM1n/biog-image/raw/master/20201107194712.png)
@@ -111,64 +111,67 @@ RESTfu1是一种定义web API接口的设计风格，尤其适用于前后端分
 
 ## APIviews类的执行过程分析
 
+APIviews源码分析
+
 ```python
-# APIviews源码分析
 from rest_frameword.views import APIview
 # urls.py
 path('booksapiview/', views.BooksAPIview.as_view())  # 参考CBV的源码
 # APIview的as_view方法（类的绑定方法）
-    def as_view(cls, **initkwargs):
-        view = suppr().as_view(**initkwargs)  # 调用父类(View)的as_view(**initkwargs)
-        view.cls = cls
-        view.initkwargs = initkwargs
-        # 只要继承了APIview 以后所有的请求都没有csrf认证了
-        return csrf_exempt(view)
+def as_view(cls, **initkwargs):
+    view = suppr().as_view(**initkwargs)  # 调用父类(View)的as_view(**initkwargs)
+    view.cls = cls
+    view.initkwargs = initkwargs
+    # 只要继承了APIview 以后所有的请求都没有csrf认证了
+    return csrf_exempt(view)
 # APIview的dispatch方法
-    def dispatch(self, request, *args, **kwagrs):
-        self.args = args
-        self.kwargs = kwargs
-        # 重新包装一个request对象 以后再用的request对象就是新的request对象了
-        request = self.initialize_request(request, *args, **kwagrs)
-        self.request = request
-        self.headers = self.default_response_headers  
-        try:
-            # 三大认证模块
-            self.initial(request, *args, **kwagrs)
-            # Get the appropriate handler method
-            if request.method.lower() in self.http_method_names:
-                 hand1er = getattr(self，request.method.lower(),self.http_method_not_a1lowed)
-            else:
-                handler = self.http_method_not_a1lowed
-            # 响应模块
-            response = handler(request， iargs，六章kwar gs)
-             # 异常模块
-            except Exception as exc:
-                response = self.handle_exception(exc)
-            # 渲染模块
-            self.response = self.finalize_response(request, response, *args, **kwargs)
-            return self.response
+def dispatch(self, request, *args, **kwagrs):
+    self.args = args
+    self.kwargs = kwargs
+    # 重新包装一个request对象 以后再用的request对象就是新的request对象了
+    request = self.initialize_request(request, *args, **kwagrs)
+    self.request = request
+    self.headers = self.default_response_headers  
+    try:
+        # 三大认证模块
+        self.initial(request, *args, **kwagrs)
+        # Get the appropriate handler method
+        if request.method.lower() in self.http_method_names:
+        hand1er = getattr(self，request.method.lower(),self.http_method_not_a1lowed)
+        else:
+        handler = self.http_method_not_a1lowed
+        # 响应模块
+        response = handler(request， iargs，六章kwar gs)
+        # 异常模块
+        except Exception as exc:
+        response = self.handle_exception(exc)
+        # 渲染模块
+        self.response = self.finalize_response(request, response, *args, **kwargs)
+        return self.response
 # APIview的initial方法
-    def initial(self, request, *args, **kwargs)
-        # Determine the API version, if versioning is in use.
-        # drf版本的处理
-        version, scheme = self.determine_version(request, *args, **kwargs)
-        request.version, request.versioning_scheme = version, scheme
-        self.perform_authentication(request)
-        # 认证组件:校验用户一游客、合法用户、非法用户
-        # 游客:代表校验通过，直接进入下一步校验(权限校验)
-        # 合法用户:代表校验通过，将用户存储在request,user中，再进入下一步校验(权限校验)
-        # 非法用户:代表校验失败，抛出异常，返回403权限异常结果
-        self.check_permissions(request)
-        # 权限组件:校验用户权限–必须登录、所有用户、登录读写游客只读、自定义用户角色
-        # 认证通过:可以进入下一步校验(频率认证)
-        # 认证失败:抛出异常,返回403权限异常结果
-        se1f.check_throttles(request)
-        # 频率组件:限制视图接口被访问的频率次数–限制的条件(IP、id、唯一键)、频率周期时间(s、 m、h)、频率的次数（3/S)
-        # 没有达到限次:正常访问接口
-        # 达到限次:限制时间内不能访问,限制时间达到后，可以重新访问
-"""请求来了之后一旦匹配到路由上 执行原来的view 里面有dispatch 但是执行的是APIviews的dispatch 
+def initial(self, request, *args, **kwargs)
+    # Determine the API version, if versioning is in use.
+    # drf版本的处理
+    version, scheme = self.determine_version(request, *args, **kwargs)
+    request.version, request.versioning_scheme = version, scheme
+    self.perform_authentication(request)
+    # 认证组件:校验用户一游客、合法用户、非法用户
+    # 游客:代表校验通过，直接进入下一步校验(权限校验)
+    # 合法用户:代表校验通过，将用户存储在request,user中，再进入下一步校验(权限校验)
+    # 非法用户:代表校验失败，抛出异常，返回403权限异常结果
+    self.check_permissions(request)
+    # 权限组件:校验用户权限–必须登录、所有用户、登录读写游客只读、自定义用户角色
+    # 认证通过:可以进入下一步校验(频率认证)
+    # 认证失败:抛出异常,返回403权限异常结果
+    se1f.check_throttles(request)
+    # 频率组件:限制视图接口被访问的频率次数–限制的条件(IP、id、唯一键)、频率周期时间(s、 m、h)、频率的次数（3/S)
+    # 没有达到限次:正常访问接口
+    # 达到限次:限制时间内不能访问,限制时间达到后，可以重新访问
+"""
+请求来了之后一旦匹配到路由上 执行原来的view 里面有dispatch 但是执行的是APIviews的dispatch 
 第三行 重新包装了request对象 之后又执行了self.initial 里面有三大认证模块 权限 频率 认证  
-然后又回来 里面执行FBV里面的反射 里面还有异常处理模块 最后渲染 如果浏览器访问就显示这样 如果是postman就返回json格式"""
+然后又回来 里面执行FBV里面的反射 里面还有异常处理模块 最后渲染 如果浏览器访问就显示这样 如果是postman就返回json格式
+"""
 ```
 
 ## Request对象
@@ -277,30 +280,72 @@ class xxxSerializer(serializers.Serializer):
             ...
 ```
 
-### 修改和删除
+### 修改和多个修改
 
 ```python
 class BookView(APIView):
-    def put(self, request, pk):
+    def put(self, request, **kwargs):
         response_msg = {'status':100, 'msg':''}
-        # 找到这个对象
-        book = Book.object.filter(pk=pk).first()
-        # 得到一个序列化的对象
-        book_ser = BookSerializer(instance=book, data=request.data)
-        # 数据验证
-        if book_ser.is_valid():  # 返回Ture表示通过
-            book_ser.save()  # 使用save 必须重新书写update 
-            response_msg['msg'] = '修改成功'
-            response_msg['data'] = book_ser.data
+        # 单个修改
+        if kwargs.get("pk", None): 
+            # 找到这个对象
+            book = Book.object.filter(pk=pk).first()
+            # 得到一个序列化的对象
+            book_ser = BookSerializer(instance=book, data=request.data)
+            # 数据验证
+            if book_ser.is_valid():  # 返回Ture表示通过
+                book_ser.save()  # 使用save 必须重新书写update 
+                response_msg['msg'] = '修改成功'
+                response_msg['data'] = book_ser.data
+            else:
+                response_msg['status'] = 101
+                response_msg['msg'] = '校验失败'
+                response_msg['data'] = book_ser.errors
+            return Response(response_msg)
         else:
-            response_msg['status'] = 101
-            response_msg['msg'] = '校验失败'
-            response_msg['data'] = book_ser.errors
+            # [{'pk': 1,'name':xxx...}, {'pk': 2,'name':xxx...}]
+            book_list = [] # 要修改的数据对象列表
+        	modify_data = [] # 要修改的数据列表
+        	for item in request.data:
+            	pk = item.pop("pk")
+            	book = models.book.objects.filter(pk=pk).first()
+            	book_list.append(book)
+            	modify_data.append(item)
+        	for i, mo_data in enumerate(modify_data):
+            	book_ser = BookSerializer(instance=book[i], data=mo_data)
+            	if book_ser.is_valid():
+                	book_ser.save()  # 使用save 必须重新书写update
+                	response_msg['msg'] = '修改成功'
+                	response_msg['data'] = book_ser.data
+            	else:
+                	response_msg['status'] = 101
+                	response_msg['msg'] = '校验失败'
+                	response_msg['data'] = book_ser.errors
+            return Response(response_msg)
+```
+
+### 删除和多个删除
+
+单个删除和多个删除都用一个方式删除
+
+```python
+class Book2View(APIView):
+    def delete(self, request, **kwargs):
+        response_msg = {'status': 100, 'msg': ''}
+        pks = []
+        pk = kwargs.get('pk')
+        if pk:
+            pks.append(pk)
+        # 多条删除规定前端传{pks = [1,2,3]} 这种格式
+        else:
+            pks = request.data.get("pks")
+        # ret是受影响的行数
+        ret = models.Book.object.filter(pk__in=pks, is_delete=False).update(is_delete=Ture)  # 不真删
+        if ret:
+            response_msg['msg'] = "删除成功"
+        else:
+            response_msg['msg'] = "没有要删除的数据"
         return Response(response_msg)
-        
-    def delete(self, request, pk):
-        Book.object.filter(pk=pk).delete()
-        return Response({'status':100, 'msg':'删除成功'})
 ```
 
 ### read_only和write_only
@@ -765,42 +810,64 @@ class TestView5(APIView):
 
 ## 过滤
 
+### 安装
+
 ```python
-# 1 安装：pip3 install django-filter
-# 2 注册，在app中注册
+pip3 install django-filter
+```
+
+### 注册
+
+```python
 INSTALLED_APPS = [
     ...
     'django_filters'
 ]
-# 3 全局配，或者局部配
- 'DEFAULT_FILTER_BACKENDS': ('django_filters.rest_framework.DjangoFilterBackend',)
-# 4 视图类
+```
+
+全局配，或者局部配
+
+```python
+'DEFAULT_FILTER_BACKENDS': ('django_filters.rest_framework.DjangoFilterBackend',)
+```
+
+### 视图配置
+
+第一种方式:
+
+```python
 class BookView(ListAPIView):
     queryset = Book.objects.all()
     serializer_class = BookSerializer
-    # 第一种方式:
     filter_backends = [DjangoFilterBackend,] # 局部配
     filter_fields = ('name',)  # 配置可以按照哪个字段来过滤
-    # 第二种方式: 写一个类然后配置
+```
+
+第二种方式: 
+
+写一个类
+
+```python
+from django_filters.rest_framework import FilterSet
+class AAbb(FilterSet):
+    class Meta:
+        model=models.Course
+        fields=['course_category']
+```
+
+然后配置
+
+```python
+class BookView(ListAPIView):
+    queryset = Book.objects.all()
+    serializer_class = BookSerializer
     filter_backends = [DjangoFilterBackend,] 
     filter_class = AAbb  # filter_class = 类名
-    # 自己写的类
-    from django_filters.rest_framework import FilterSet
-    class AAbb(FilterSet):
-        class Meta:
-            model=models.Course
-            fields=['course_category']
-            
-# 自定义过滤规则
-from rest_framework.filters import BaseFilterBackend
+```
 
-class MyFilter(BaseFilterBackend):
-    def filter_queryset(self, request, queryset, view):
-        ... 
-        过滤规则
-        ...
-        return queryset
-# 区间过滤(沿用第二种方法,实现价格区间过滤)
+案例: 区间过滤(沿用第二种方法,实现价格区间过滤)
+
+```python
 from django_filters.rest_framework import FilterSet
 class AAbb(FilterSet):
     # 课程的价格范围要大于min_price,小于max_price
@@ -811,15 +878,28 @@ class AAbb(FilterSet):
         fields=['course_category']   
 ```
 
-## 排序
+### 了解 : django原生过滤 - 自定义过滤规则
 
 ```python
-# 局部使用和全局使用
-# 局部使用
+from rest_framework.filters import BaseFilterBackend
+
+class MyFilter(BaseFilterBackend):
+    def filter_queryset(self, request, queryset, view):
+        ... 
+        过滤规则
+        ...
+        return queryset
+```
+
+## 排序
+
+局部使用
+
+```python
 from rest_framework.generics import ListAPIView
 from rest_framework.filters import OrderingFilter
-from app01.models import Book
-from app01.ser import BookSerializer
+from .models import Book
+from .ser import BookSerializer
 class Book2View(ListAPIView):
     queryset = Book.objects.all()
     serializer_class = BookSerializer
@@ -827,8 +907,7 @@ class Book2View(ListAPIView):
     ordering_fields = ('id', 'price')
     
 # urls.py
-path('books2/', views.Book2View.as_view()),
-]
+path('books2/', views.Book2View.as_view())
 
 # 使用：
 http://127.0.0.1:8000/books2/?ordering=-price
@@ -838,24 +917,27 @@ http://127.0.0.1:8000/books2/?ordering=-id
 
 ## 异常处理
 
+drf帮我们封装了异常，没有封装处理的异常就交给django处理
+
+但是处理的返回格式不符合咱们的要求，所以我们要统一接口返回
+
+写一个自定义异常方法，替换掉全局，统一接口的返回
+
 ```python
-# 统一接口返回
-# exceptions.py
-# 自定义异常方法，替换掉全局
-# 写一个方法
-# 自定义异常处理的方法
 from rest_framework.views import exception_handler
 from rest_framework.response import Response
 from rest_framework import status
 def my_exception_handler(exc, context):
     response=exception_handler(exc, context)
-    # 两种情况，一个是None，drf没有处理
-    #response对象，django处理了，但是处理的不符合咱们的要求
-    # print(type(exc))
+    # 返回值两种情况，一个是None，drf没有处理，交给django处理了,一个是response对象，drf处理了
+    # print(type(exc)) 此次报错的异常类型是ZeroDivisionError
 
     if not response:
+        # 针对异常类型进行进一步的细分处理
         if isinstance(exc, ZeroDivisionError):
-            return Response(data={'status': 777, 'msg': "除以0的错误" + str(exc)}, status=status.HTTP_400_BAD_REQUEST)
+            return Response(data={'status': 777, 'msg': "错误信息" + str(exc)}, status=status.HTTP_400_BAD_REQUEST)
+        if isinstance(exc, "其他异常类型..."):
+            return Response(data={'status': 666, 'msg': "错误信息" + str(exc)}, status=status.HTTP_400_BAD_REQUEST)
         return Response(data={'status':999,'msg':str(exc)},status=status.HTTP_400_BAD_REQUEST)
     else:
         # return response
@@ -905,103 +987,155 @@ REST_FRAMEWORK = {
 
 ## 跨域
 
-```python
- '由于浏览器具有"同源策略"的限制，如果在同一个域下发送ajax请求，浏览器的同源策略不会阻止'
- '如果在不同域下发送ajax，浏览器的同源策略会阻止'
- 解决方法：CORS(跨站资源共享，本质是设置响应头)设置响应头解决跨越
- response['Access-Contro7-A77ow-origin'] ="*"
- '简单请求：发送一次请求'
- 条件：
-    1、请求方式：HEAD、GET、POST
-    2、请求头信息：
-        Accept
-        Accept-Language
-        Content-Language
-        Last-Event-ID
-        Content-Type 对应的值是以下三个中的任意一个
-                                application/x-www-form-urlencoded
-                                multipart/form-data
-                                text/plain
- 
-注意：同时满足以上两个条件时，则是简单请求，否则为复杂请求
- '复杂请求：发送两次请求 在发送数据之前会先发一次OPTIONS请求用于做“预检”，只有“预检”通过后才再发送一次请求用于数据传输。'
- 
- 可以自己写在中间件 也可以使用第三方的解决
- 1.自己写
-from django.utils.deprecation import MiddlewareMixin
+由于浏览器具有"同源策略"的限制，如果在同一个域下发送ajax请求，浏览器的同源策略不会阻止，如果在不同域下发送ajax，浏览器的同源策略会阻止。
 
-class MvMiddle(MiddlewareMixin):
-    def process_response(self, request, response):
-        response['Access-Control-Allow-Origin'] = '*'
-        if request.method == "OPTIONS":
-            response["Access-Control-Allow-Headers"] = "Content-Type"
-        return response
- "然后中间件配置"
- MIDDLEWARE = [
-    ...
-    "luffyapi.utils.middle.MyMiddle"
-] 
-2. 第三方解决方案
-2.1 pip安装
-    pip install django-cors-headers
-2.2 添加到settings的app中
-    INSTALLED_APPS = (
-    	...
-    	'corsheaders',
-    	...
-    )
-2.3 添加中间件
-    MIDDLEWARE = [  # Or MIDDLEWARE_CLASSES on Django < 1.10
-    	...
-    	'corsheaders.middleware.CorsMiddleware',
-    	'django.middleware.common.CommonMiddleware',
-    	...
-    ]
-2.4 setting下面添加下面的配置
-    CORS_ALLOW_CREDENTIALS = True
-    CORS_ORIGIN_ALLOW_ALL = True
-    CORS_ORIGIN_WHITELIST = (
-    	'*'
-    )
-    CORS_ALLOW_METHODS = (
-    	'DELETE',
-    	'GET',
-    	'OPTIONS',
-    	'PATCH',
-    	'POST',
-    	'PUT',
-    	'VIEW',
-    )
-    
-    CORS_ALLOW_HEADERS = (
-    	'XMLHttpRequest',
-    	'X_FILENAME',
-    	'accept-encoding',
-    	'authorization',
-    	'content-type',
-    	'dnt',
-    	'origin',
-    	'user-agent',
-    	'x-csrftoken',
-    	'x-requested-with',
-    	'Pragma',
-    )
+只要同时满足以下两大条件，就属于简单请求。
+
+```python
+1、请求方式：HEAD、GET、POST
+2、请求头信息：
+   Accept
+   Accept-Language
+   Content-Language
+   Last-Event-ID
+   Content-Type 对应的值是以下三个中的任意一个
+        application/x-www-form-urlencoded
+        multipart/form-data
+        text/plain
 ```
 
-## JWT
+注意：同时满足以上两个条件时，则是简单请求，否则为复杂请求
+
+简单请求：发送一次请求
+
+复杂请求：发送两次请求 在发送数据之前会先发一次OPTIONS请求用于做“预检”，只有“预检”通过后才再发送一次请求用于数据传输。
+
+解决方法：CORS(跨站资源共享，本质是设置响应头)设置响应头解决跨越
+
+### 方法一 
+
+1. 自己写个中间件
+
+   ```python
+   from django.utils.deprecation import MiddlewareMixin
+   
+   class MvMiddle(MiddlewareMixin):
+       def process_response(self, request, response):
+           response['Access-Control-Allow-Origin'] = '*'
+           if request.method == "OPTIONS":
+               response["Access-Control-Allow-Headers"] = "Content-Type"
+           return response
+   ```
+
+2. 然后中间件配置
+
+   ```python
+   MIDDLEWARE = [
+       ...
+       "luffyapi.utils.middle.MyMiddle"
+   ] 
+   ```
+
+### 方法二 
+
+第三方解决方案
+
+1. pip安装
+
+   ```python
+   pip install django-cors-headers
+   ```
+
+2. 注册
+
+   ```python
+   INSTALLED_APPS = (
+       	...
+       	'corsheaders',
+       	...
+       )
+   ```
+
+3. 添加中间件
+
+   ```python
+   MIDDLEWARE = [  # Or MIDDLEWARE_CLASSES on Django < 1.10
+       	...
+       	'corsheaders.middleware.CorsMiddleware',
+       	'django.middleware.common.CommonMiddleware',
+       	...
+       ]
+   ```
+
+4. 添加配置
+
+   ```python
+   CORS_ALLOW_CREDENTIALS = True
+   CORS_ORIGIN_ALLOW_ALL = True
+   CORS_ORIGIN_WHITELIST = (
+       '*'
+   )
+   CORS_ALLOW_METHODS = (
+       'DELETE',
+       'GET',
+       'OPTIONS',
+       'PATCH',
+       'POST',
+       'PUT',
+       'VIEW',
+   )
+   
+   CORS_ALLOW_HEADERS = (
+       'XMLHttpRequest',
+       'X_FILENAME',
+       'accept-encoding',
+       'authorization',
+       'content-type',
+       'dnt',
+       'origin',
+       'user-agent',
+       'x-csrftoken',
+       'x-requested-with',
+       'Pragma',
+   )
+   ```
+
+## JWT(Json Web Token)
+
+一般在前后端分离时用于做认证(登陆)使用的技术，jwt的实现原理用户登陆成功之后会给前端返回一段token
+
+第一段是类型和算法信息,第二段是用户信息和超时时间,第三段是sa256(前两段拼接)加密+base64url
+
+将这三部分用`.`连接成一个完整的字符串,构成了最终的jwt
 
 ```python
-'一般在前后端分离时用于做认证(登陆)使用的技术,jwt的实现原理用户登陆成功之后会给前端返回一段token,token是由.分割的三短组成'
- '第一段是类型和算法信息,第二段是用户信息和超时时间,第三段是sa256(前两段拼接)加密+base64url'
- '以后前端再次发来信息时,会有超时验证,token的合法性校验,优势就是token只在前端保存,后端只负责校验,内部还集成了超时时间,后端可以根据时间校验是否超时'
- '内部还存在hash256加密,所以用户不可以修改token,只要一修改就认证失败'
- 1.安装
- pip install djangorestframework-jwt
- 2.setting注册app
- 'rest_framework_jwt',
- 
- 3.代码
- from rest_framework_jwt.serializers import jwt_payload_handler, jwt_encode_handler
+eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiYWRtaW4iOnRydWV9.TJVA95OrM7E2cBab30RMHrHDcEfxjoYZgeFONFh7HgQ
+```
+
+以后前端再次发来信息时会有超时验证、token的合法性校验，优势就是token只在前端保存，后端只负责校验。
+
+内部还集成了超时时间,后端可以根据时间校验是否超时 内部还存在hash256加密,所以用户不可以修改token,只要一修改就认证失败
+
+1. 安装
+
+   ```python
+   pip install djangorestframework-jwt
+   ```
+
+2. 注册
+
+   ```python
+   INSTALLED_APPS = (
+       	...
+       	'rest_framework_jwt',
+       	...
+       )
+   ```
+
+3. 
+
+```python
+from rest_framework_jwt.serializers import jwt_payload_handler, jwt_encode_handler
 # 根据user对象生成payload(中间值的数据)
 jwt_payload_handler = api_settings.JWT_PAYLOAD_HANDLER
 payload = jwt_payload_handler(user)

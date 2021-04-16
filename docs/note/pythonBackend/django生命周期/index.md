@@ -122,13 +122,13 @@ urlpatterns = [
 
 ```python
 """
-django 1.x 路由层使用的是url方法
-django 2.x和3.x版本中路由层使用的是path方法
+django1.x路由层使用的是url方法
+django2.x和3.x版本中路由层使用的是path方法
     url()第一个参数支持正则 path不支持正则 写什么就匹配什么
     如需正则可导入使用 re_path  2.x和3.x里面的re_path就等价于1.x里面的url
 """
 '虽然path不支持正则但是它的内部支持五种转换器'
-path( 'index/<int:id>/ ',index) # #将第二个路由里面的内容先转成整型然后以关键字的形式传递给后面的视图函数
+path( 'index/<int:id>/ ',index) # 将第二个路由里面的内容先转成整型然后以关键字的形式传递给后面的视图函数
 def index( request,id):
     print ( id,type (id))
     return HttpResponse( 'index' )

@@ -47,6 +47,10 @@ sys.path.insert(0, BASE_DIR)  # 此时因为配置文件的改动,BASE_DIR是小
 sys.path.insert(1, os.path.join(BASE_DIR, 'apps'))  # apps也加入到环境变量
 ```
 
+修改配置
+
+![image-20210416102553536](https://gitee.com/JqM1n/biog-image/raw/master/20210416102553.png)
+
 ### 3.封装异常/日志/Response/跨域
 
 #### 封装logger
@@ -103,11 +107,11 @@ LOGGING = {
 }
 ```
 
-##### utils/logging.py
+##### utils/logger.py
 
 ```python
 import logging
-logger = logging.getLogger('django') # 跟配置文件中loggers日志对象下的名字对应
+log = logging.getLogger('django') # 跟配置文件中loggers日志对象下的名字对应
 ```
 
 #### 封装项目异常处理

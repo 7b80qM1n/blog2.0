@@ -5,66 +5,88 @@ id: linux-docker1
 title: Docker
 ---
 
-```shell
-是什么：
+## 简介
+
 docker是linux容器的一种封装，提供简单易用的容器使用接口。它是最流行的Linux容器解决方案。
+
 docker的接口相当简单，用户可以方便的创建、销毁容器。
+
 docker将应用程序与程序的依赖，打包在一个文件里面。运行这个文件就会生成一个虚拟容器。
+
 程序运行在虚拟容器里，如同在真实物理机上运行一样，有了docker，就不用担心环境问题了。
-能干嘛：解决环境配置的难题
-镜像(image) :
-docker镜像就好比是一个模板,可以通过这个模板来创建容器服务,tomcat镜像===>run ==>tomcat01容器(提供服务器）,通过这个镜像可以创建多个容器（最终服务运行或者项目运行就是在容器中的).
 
-容器(container) :
-Docker利用容器技术,独立运行一个或者一个组应用，通过镜像来创建的.启动，停止,删除,基本命令!
-目前就可以把这个容器理解为就是一个简易的linux系统
+### 镜像(image) :
 
-仓库(repository) : 
-仓库就是存放镜像的地方!
-仓库分为公有仓库和私有仓库!
-Docker Hub(默认是国外的)
-阿里云....都有容器服务器（配置镜像加速!)
+- docker镜像就好比是一个模板,可以通过这个模板来创建容器服务,tomcat镜像===>run ==>tomcat01容器(提供服务器）,通过这个镜像可以创建多个容器（最终服务运行或者项目运行就是在容器中的)
 
-```
+### 容器(container) :
 
-```shell
-1.卸载旧的版本
-yum remove docker \
-                  docker-client \
-                  docker-client-latest \
-                  docker-common \
-                  docker-latest \
-                  docker-latest-logrotate \
-                  docker-logrotate \
-                  docker-engine
-2.需要的安装包
-yum install -y yum-utils
-3.设置镜像的仓库
-yum-config-manager \
-    --add-repo \
-    http://mirrors.aliyun.com/docker-ce/linux/centos/docker-ce.repo
- # 更新yum软件包索引
- yum makecache fast
-4.安装docker  ce社区版  ee企业版
-yum install docker-ce docker-ce-cli containerd.io
+- Docker利用容器技术,独立运行一个或者一个组应用，通过镜像来创建的.启动，停止,删除,基本命令!目前就可以把这个容器理解为就是一个简易的linux系统
 
-5.启动docker
-systemctl start docker
+### 仓库(repository) : 
 
-6.使用docker version 检测是否成功
-```
+- 仓库就是存放镜像的地方!
+
+- 仓库分为公有仓库和私有仓库!
+
+- Docker Hub(默认是国外的)，阿里云....都有容器服务器（配置镜像加速!)
+
+## 使用
+
+1. 卸载旧的版本
+
+   ```shell
+   yum remove docker \
+                     docker-client \
+                     docker-client-latest \
+                     docker-common \
+                     docker-latest \
+                     docker-latest-logrotate \
+                     docker-logrotate \
+                     docker-engine
+   ```
+
+2. 需要的安装包
+
+   ```shell
+   yum install -y yum-utils
+   ```
+
+3. 设置镜像的仓库
+
+   ```shell
+   yum-config-manager --add-repo http://mirrors.aliyun.com/docker-ce/linux/centos/docker-ce.repo
+   # 更新yum软件包索引
+   yum makecache fast
+   ```
+
+4. 安装docker  ce社区版  ee企业版
+
+   ```shell
+   yum install docker-ce docker-ce-cli containerd.io
+   ```
+
+5. 启动docker
+
+   ```shell
+   systemctl start docker
+   ```
+
+6. 使用`docker version` 检测是否成功
 
 ![image-20210118203714763](https://gitee.com/JqM1n/biog-image/raw/master/20210118203722.png)
 
+7. hello-word
+
 ```shell
-7.hello-word
 docker run hello-world
 ```
 
 ![image-20210118204244812](https://gitee.com/JqM1n/biog-image/raw/master/20210118204244.png)
 
+8. 查看一下下载的镜像
+
 ```shell
-8.查看一下下载的镜像
 docker images
 ```
 
@@ -103,22 +125,19 @@ sudo systemctl restart docker
 
 ### Docker是怎么工作的?
 
-```
 Docker是一个Client-Server结构的系统,Docker的守护进程运行在主机上.通过Socker从客户端访问!
+
 DockerServer接收到Docker-Client的指令,就会执行这个命令!
-```
 
  ![image-20210118220921899](https://gitee.com/JqM1n/biog-image/raw/master/20210118220922.png)
 
 ### Docker为什么比Vm快
 
-```
-1.Docker有着比虚拟机更少的抽象层
-2.Docker利用的是宿主机的内核,vm需要是Guest OS
-所以说,
-新建一个容器的时候,docker不需要像虚拟机一样重新加载一个操作系统内核,避免引导.虚拟机是加载Guest OS,分钟级别的
-而docker是利用宿主机的操作系统,省略了这个复杂的过程,秒级
-```
+1. Docker有着比虚拟机更少的抽象层
+2. Docker利用的是宿主机的内核,vm需要是Guest OS
+
+所以说，新建一个容器的时候，docker不需要像虚拟机一样重新加载一个操作系统内核,避免引导.虚拟机是加载Guest OS，分钟级别的
+而docker是利用宿主机的操作系统，省略了这个复杂的过程，秒级
 
 ![image-20210118220647886](https://gitee.com/JqM1n/biog-image/raw/master/20210118220647.png)
 
@@ -355,7 +374,6 @@ docker save e8d6a44424f4 > /opt/add-vim.tar
 docker load < /opt/add-vim.tar
 # 首次导入的镜像是没有标签名字的,手动添加即可
 docker tag 镜像id 标签名
-
 ```
 
  
