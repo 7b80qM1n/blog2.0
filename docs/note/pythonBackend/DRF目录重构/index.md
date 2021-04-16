@@ -61,8 +61,8 @@ sys.path.insert(1, os.path.join(BASE_DIR, 'apps'))  # apps也加入到环境变�
 # 项目上线后, 日志文件打印级别不能过低，因为一次日志记录就是一次文件io操作
 LOGGING = {
     'version': 1,
-    'disable_existing_loggers': False,
-    'formatters': {
+    'disable_existing_loggers': False,  # 是否禁用已经存在的日志器
+    'formatters': {  # 日志信息显示为格式
         'verbose': {
             'format': '%(levelname)s %(asctime)s %(module)s %(lineno)d %(message)s'
         },
@@ -70,19 +70,19 @@ LOGGING = {
             'format': '%(levelname)s %(module)s %(lineno)d %(message)s'
         },
     },
-    'filters': {
-        'require_debug_true': {
+    'filters': {  # 对日志进行过滤
+        'require_debug_true': {  # django在debug模式下才输出日志
             '()': 'django.utils.log.RequireDebugTrue',
         },
     },
-    'handlers': {
-        'console': {
+    'handlers': {  # 日志处理方法
+        'console': {  # 向终端中输出日志
             'level': 'WARNING',
             'filters': ['require_debug_true'],
             'class': 'logging.StreamHandler',
             'formatter': 'simple'
         },
-        'file': {
+        'file': {  # 向文件中输出日志
             'level': 'ERROR',
             'class': 'logging.handlers.RotatingFileHandler',
             # 日志位置,日志文件名,日志保存目录必须手动创建，注：这里的文件路径要注意BASE_DIR代表的是小luffyapi
@@ -98,9 +98,9 @@ LOGGING = {
         },
     },
     # 日志对象
-    'loggers': {
-        'django': {
-            'handlers': ['console', 'file'],
+    'loggers': {  # 日志器
+        'django': {  # 定义了一个名为django的日志器
+            'handlers': ['console', 'file'],  # 可以同时向终端与文件中输出日志
             'propagate': True, # 是否让日志信息继续冒泡给其他的日志处理系统
         },
     }
@@ -138,7 +138,7 @@ def common_exception_handler(exc, context):
 
 ```python
 REST_FRAMEWORK = {
-    'EXCEPTION_HANDLER': 'utils.exceptions.common_exception_handler',}
+    'EXCEPTION_HANDLER': 'utils.exception.common_exception_handler',}
 ```
 
 #### 二次封装Response模块
@@ -182,8 +182,9 @@ pip install django-cors-headers
     	...
     ]
 # 添加下面的配置
-    CORS_ALLOW_CREDENTIALS = True
+    CORS_ALLOW_CREDENTIALS = True  # 允许携带cookie
     CORS_ORIGIN_ALLOW_ALL = True
+    # CORS白名单
     CORS_ORIGIN_WHITELIST = (
     	'*'
     )
@@ -342,9 +343,13 @@ urlpatterns = [
 
 ##### 最后迁移
 
-#### 6.Simple UI 一个基于Django Admin的现代化主题
+### 6.Simple UI 一个基于Django Admin的现代化主题
 
-#### pip安装  pip3 install django-simpleui
+#### pip安装  
+
+```python
+pip3 install django-simpleui
+```
 
 ##### dev.py
 
@@ -355,6 +360,6 @@ INSTALLED_APPS = [
     # ...
   ]
 # admin LOGO
-SIMPLEUI_LOGO = 'luffyapi\media\icon\default.png'
+SIMPLEUI_LOGO = 'luffyapi/media/icon/default.png'
 ```
 
