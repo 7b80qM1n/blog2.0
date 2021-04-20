@@ -76,296 +76,166 @@ pip install celery
 
 app=Celery(‘任务名’, broker=’xxx’, backend=’xxx’)
 
-## 两种celery任务结构：提倡用包管理，结构更清晰
-
-```python
-# 如果 Celery对象:Celery(...) 是放在一个模块下的
-# 1）终端切换到该模块所在文件夹位置：scripts
-# 2）执行启动worker的命令：celery worker -A 模块名 -l info -P eventlet
-# 注：windows系统需要eventlet支持，Linux与MacOS直接执行：celery worker -A 模块名 -l info
-# 注：模块名随意
-
-
-# 如果 Celery对象:Celery(...) 是放在一个包下的
-# 1）必须在这个包下建一个celery.py的文件，将Celery(...)产生对象的语句放在该文件中
-# 2）执行启动worker的命令：celery worker -A 包名 -l info -P eventlet
-# 注：windows系统需要eventlet支持，Linux与MacOS直接执行：celery worker -A 模块名 -l info
-# 注：包名随意
-```
-
 ## Celery执行异步任务
 
-#### 基本结构
+### 包架构封装
 
 ```python
-# 创建py文件：celery_app_task.py
-import celery
-import time
-# broker='redis://127.0.0.1:6379/2' 不加密码
-backend='redis://:123456@127.0.0.1:6379/1'
-broker='redis://:123456@127.0.0.1:6379/2'
-cel=celery.Celery('test',backend=backend,broker=broker)
-@cel.task
-def add(x,y):
+"""
+project
+    ├── celery_task			  celery包
+		├── sms				 任务1 
+			├── __init__.py  
+			└── tasks.py	 异步任务代码
+		├── __init__.py 	 
+		├── config.py		 配置相关文件
+		└── celery.py		 启动函数
+"""
+```
+
+### 异步执行
+
+#### celery.py
+
+```python
+from celery import Celery
+
+# 创建实例对象
+app = Celery('B2cMall')
+
+# 加载配置文件
+app.config_from_object('celery_task.config')
+
+# 自动注册异步任务
+app.autodiscover_tasks(['celery_task.sms'])
+```
+
+#### config.py
+
+```python
+# broker_url='redis://127.0.0.1:6379/7' 不加密码
+broker_url = f'redis://:123456@127.0.0.1:6379/7'  # 任务队列
+backend_url = f'redis://:123456@127.0.0.1:6379/8'  # 结构存储
+```
+
+#### sms/tasks.py
+
+```python
+from celery_task.celery import app
+
+@app.task(name="xxx")  # 注册任务,name=任务别名
+def send_sms_code(mobile, code):
+    pass
+```
+
+#### 执行
+
+windows
+
+celery不支持在windows下运行任务，需要借助eventlet来完成
+
+`-c`是协程的数量，生产环境可以用1000
+
+```python
+pip3 install eventlet
+celery -A celery_task worker -l info -P eventlet -c 10
+```
+
+非windows
+
+```python
+celery -A celery_task worker -l info
+```
+
+#### 提交异步任务
+
+```python
+send_sms_code.delay(mobile, code)
+```
+
+### 定时执行
+
+#### 举例目录
+
+```python
+"""
+project
+    ├── celery_task			  celery包
+		├── test_time		  定时任务1 
+			├── __init__.py  
+			└── tasks.py	 异步任务代码
+		├── __init__.py 	 
+		├── config.py		 配置相关文件
+		└── celery.py		 启动函数
+"""
+```
+
+#### celery.py
+
+```python
+from celery import Celery
+
+# 创建实例对象
+app = Celery('B2cMall')
+
+# 加载配置文件
+app.config_from_object('celery_task.config')
+
+# 自动注册异步任务
+app.autodiscover_tasks(['celery_task.test_time'])
+
+# 时区
+app.conf.timezone = 'Asia/Shanghai'
+# 是否使用UTC
+app.conf.enable_utc = False
+
+# 任务的定时配置
+from datetime import timedelta
+
+app.conf.beat_schedule = {
+    'add': {
+        'task': 'celery_task.test_time.tasks.add',  # 路径
+        'schedule': timedelta(seconds=2),  # 单位s
+        'args': (123,456),  # 参数 
+    }}
+```
+
+#### config.py
+
+```python
+# broker_url='redis://127.0.0.1:6379/7' 不加密码
+broker_url = f'redis://:123456@127.0.0.1:6379/7'  # 任务队列
+backend_url = f'redis://:123456@127.0.0.1:6379/8'  # 结构存储
+```
+
+#### test_time/tasks.py
+
+```python
+from celery_task.celery import app
+
+@app.task         # 注意定时任务的装饰器是没有括号的
+def add(x, y):
     return x+y
 ```
 
-#### 包架构封装（多任务结构）
-
-```
-project
-    ├── celery_task  	# celery包
-    │   ├── __init__.py # 包文件
-    │   ├── celery.py   # celery连接和配置相关文件，且名字必须叫celery.py
-    │   └── tasks.py    # 所有任务函数
-    ├── add_task.py  	# 添加任务
-    └── get_result.py   # 获取结果
-```
-
-### 基本使用
-
-##### celery.py
+任务添加好了，需要让celery单独启动一个进程来定时发起这些任务， 注意， 这里是发起任务，不是执行，这个进程只会不断的去检查你的任务计划，每发现有任务需要执行了，就发起一个任务调用消息，交给celery worker去执行
 
 ```python
-# 1）创建app + 任务
-
-# 2）启动celery(app)服务：
-# 非windows
-# 命令：celery -A celery_task worker -l info
-# windows：
-# pip3 install eventlet
-# celery -A celery_task worker -l info -P eventlet
-
-# 3）添加任务：手动添加，要自定义添加任务的脚本，右键执行脚本
-
-# 4）获取结果：手动获取，要自定义获取任务的脚本，右键执行脚本
-
-
-from celery import Celery
-broker = 'redis://127.0.0.1:6379/1'
-backend = 'redis://127.0.0.1:6379/2'
-app = Celery(broker=broker, backend=backend, include=['celery_task.tasks'])
+celery -A celery_task beat -l info
 ```
 
-##### tasks.py
+执行同上
+
+windows
 
 ```python
-from .celery import app
-import time
-@app.task
-def add(n, m):
-    print(n)
-    print(m)
-    time.sleep(10)
-    print('n+m的结果：%s' % (n + m))
-    return n + m
-
-@app.task
-def low(n, m):
-    print(n)
-    print(m)
-    print('n-m的结果：%s' % (n - m))
-    return n - m
+celery -A celery_task worker -l info -P eventlet
 ```
 
-##### add_task.py
+非windows
 
 ```python
-from celery_task import tasks
-
-# 添加立即执行任务
-t1 = tasks.add.delay(10, 20)
-t2 = tasks.low.delay(100, 50)
-print(t1.id)
-
-
-# 添加延迟任务
-from datetime import datetime, timedelta
-eta=datetime.utcnow() + timedelta(seconds=10)
-tasks.low.apply_async(args=(200, 50), eta=eta)
+celery -A celery_task worker -l info
 ```
 
-##### get_result.py
-
-```python
-from celery_task.celery import app
-
-from celery.result import AsyncResult
-
-id = '21325a40-9d32-44b5-a701-9a31cc3c74b5'
-if __name__ == '__main__':
-    async = AsyncResult(id=id, app=app)
-    if async.successful():
-        result = async.get()
-        print(result)
-    elif async.failed():
-        print('任务失败')
-    elif async.status == 'PENDING':
-        print('任务等待中被执行')
-    elif async.status == 'RETRY':
-        print('任务异常后正在重试')
-    elif async.status == 'STARTED':
-        print('任务已经开始被执行')
-```
-
-### 高级使用
-
-##### celery.py
-
-```python
-# 1）创建app + 任务
-
-# 2）启动celery(app)服务：
-# 非windows
-# 命令：celery -A celery_task worker -l info
-# windows：
-# pip3 install eventlet
-# celery -A celery_task worker -l info -P eventlet
-
-
-# 3）添加任务：自动添加任务，所以要启动一个添加任务的服务
-# 命令：celery -A celery_task beat -l info
-
-# 4）获取结果
-
-
-from celery import Celery
-
-broker = 'redis://127.0.0.1:6379/1'
-backend = 'redis://127.0.0.1:6379/2'
-app = Celery(broker=broker, backend=backend, include=['celery_task.tasks'])
-
-
-# 时区
-app.conf.timezone = 'Asia/Shanghai'
-# 是否使用UTC
-app.conf.enable_utc = False
-
-# 任务的定时配置
-from datetime import timedelta
-from celery.schedules import crontab
-app.conf.beat_schedule = {
-    'low-task': {
-        'task': 'celery_task.tasks.low',
-        'schedule': timedelta(seconds=3),
-        # 'schedule': crontab(hour=8, day_of_week=1),  # 每周一早八点
-        'args': (300, 150),
-    }
-}
-```
-
-##### tasks.py
-
-```python
-from .celery import app
-
-import time
-@app.task
-def add(n, m):
-    print(n)
-    print(m)
-    time.sleep(10)
-    print('n+m的结果：%s' % (n + m))
-    return n + m
-
-
-@app.task
-def low(n, m):
-    print(n)
-    print(m)
-    print('n-m的结果：%s' % (n - m))
-    return n - m
-```
-
-##### get_result.py
-
-```python
-from celery_task.celery import app
-
-from celery.result import AsyncResult
-
-id = '21325a40-9d32-44b5-a701-9a31cc3c74b5'
-if __name__ == '__main__':
-    async = AsyncResult(id=id, app=app)
-    if async.successful():
-        result = async.get()
-        print(result)
-    elif async.failed():
-        print('任务失败')
-    elif async.status == 'PENDING':
-        print('任务等待中被执行')
-    elif async.status == 'RETRY':
-        print('任务异常后正在重试')
-    elif async.status == 'STARTED':
-        print('任务已经开始被执行')
-```
-
-### django中使用
-
-##### celery.py
-
-```python
-"""
-celery框架django项目工作流程
-1）加载django配置环境
-2）创建Celery框架对象app，配置broker和backend，得到的app就是worker
-3）给worker对应的app添加可处理的任务函数，用include配置给worker的app
-4）完成提供的任务的定时配置app.conf.beat_schedule
-5）启动celery服务，运行worker，执行任务
-6）启动beat服务，运行beat，添加任务
-
-重点：由于采用了django的反射机制，使用celery.py所在的celery_task包必须放置项目的根目录下
-"""
-
-# 一、加载django配置环境
-import os
-os.environ.setdefault("DJANGO_SETTINGS_MODULE", "luffyapi.settings.dev")
-
-# 二、加载celery配置环境
-from celery import Celery
-# broker
-broker = 'redis://127.0.0.1:6379/0'
-# backend
-backend = 'redis://127.0.0.1:6379/1'
-# worker
-app = Celery(broker=broker, backend=backend, include=['celery_task.tasks'])
-
-
-# 时区
-app.conf.timezone = 'Asia/Shanghai'
-# 是否使用UTC
-app.conf.enable_utc = False
-
-# 任务的定时配置
-from datetime import timedelta
-from celery.schedules import crontab
-app.conf.beat_schedule = {
-    'update-banner-list': {
-        'task': 'celery_task.tasks.update_banner_list',
-        'schedule': timedelta(seconds=10),
-        'args': (),
-    }
-}
-```
-
-##### tasks.py
-
-```python
-from .celery import app
-
-from django.core.cache import cache
-from home import models, serializers
-from django.conf import settings
-@app.task
-def update_banner_list():
-    queryset = models.Banner.objects.filter(is_delete=False, is_show=True).order_by('-orders')[:settings.BANNER_COUNT]
-    banner_list = serializers.BannerSerializer(queryset, many=True).data
-    # 拿不到request对象，所以头像的连接base_url要自己组装
-    for banner in banner_list:
-        banner['image'] = f'http://127.0.0.1:8000{banner['image']}'
-
-    cache.set('banner_list', banner_list, 86400)
-    return True
-```
-
-
+#### 

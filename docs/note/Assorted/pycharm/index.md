@@ -16,6 +16,7 @@ file and code template ... 							  自动添加固定的代码
 Code style - Hard wrap at  							  竖线长度
 Appearance - Show hard wrap and visual guides (...) 	显示/取消竖线
 General - Change font size with Ctrl+Mouse Wheel  		用Ctrl+鼠标轮改变字体大小
+live templates 										 设置快速输入常用代码
 """
 ```
 

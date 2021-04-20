@@ -60,6 +60,7 @@ module.exports = {
               "note/Commonly used modules/sys模块/modules03",
               "note/Commonly used modules/异常处理/modules04",
               "note/Commonly used modules/os文件目录/modules05",
+              "note/Commonly used modules/生成临时身份令牌/modules06"
               
     ],
     前端:["note/frontEnd/http/http01",

@@ -363,3 +363,12 @@ INSTALLED_APPS = [
 SIMPLEUI_LOGO = 'luffyapi/media/icon/default.png'
 ```
 
+##### admin.py
+
+```python
+from django.contrib import admin
+from . import models
+
+admin.site.register(models.模型表名)
+```
+
