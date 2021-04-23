@@ -7,7 +7,7 @@ title: Django生命周期流程图
 
 ## 流程图
 
-![img](https://gitee.com/JqM1n/biog-image/raw/master/20210405232243.png)
+![image-20210423220607365](https://gitee.com/JqM1n/biog-image/raw/master/20210423220607.png)
 
 ## URL路由系统 url.py(路由层）
 
@@ -659,6 +659,8 @@ book_obj.authors.clear()  # 括号内不要加任何参数
     外键字段不在我手上 那么我查你的时候 就是反向
 '正向查询按字段,      查询的结果多个的时候需要加.all()'
 '反向查询按表名小写,   查询的结果多个的时候需要加_set.all()'
+
+# 如果外键字段模型中设置了related_name字段属性,那么在反向查询的时候,就可以直接按设置的值查询了
 ```
 
 #### 多表查询

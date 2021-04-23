@@ -43,6 +43,7 @@ module.exports = {
               "note/Assorted/虚拟环境搭建/Assorted-virtualenv1",
               "note/Assorted/配置pip安装源/Assorted-pip1",
               "note/Assorted/git整理/Assorted-git整理",
+              "note/Assorted/linux开放端口/Assorted-linuxport1",
     ],
     py基础:["note/pythonBasics/代码块缓存机制/pythonBasics-01",
               "note/pythonBasics/str常用操作/pythonBasics-str1",
@@ -55,12 +56,15 @@ module.exports = {
               
 
     ],
-    常用模块:["note/Commonly used modules/open文件操作/modules01",
+    常用模块组件:[
               "note/Commonly used modules/json模块/modules02",
               "note/Commonly used modules/sys模块/modules03",
               "note/Commonly used modules/异常处理/modules04",
+              "note/Commonly used modules/open文件操作/modules01",
               "note/Commonly used modules/os文件目录/modules05",
-              "note/Commonly used modules/生成临时身份令牌/modules06"
+              "note/Commonly used modules/临时身份令牌/modules06",
+              "note/Commonly used modules/FastDFS/element-FastDFS",
+              "note/Commonly used modules/QQ登录接入/modules08"
               
     ],
     前端:["note/frontEnd/http/http01",
@@ -78,6 +82,7 @@ module.exports = {
             "note/pythonBackend/DjangoRestFramework/pythonBackend-django03",
             "note/pythonBackend/DRF目录重构/pythonBackend-django04",
             "note/pythonBackend/Celery异步任务框架/pythonBackend-django05",
+            "note/pythonBackend/QQEmail/pythonBackend-django06",
     ],
     Liunx:["note/linux/初识/linux-introduce1",
             "note/linux/基本指令/linux-basic1",

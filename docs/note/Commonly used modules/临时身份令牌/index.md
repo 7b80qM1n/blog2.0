@@ -2,7 +2,7 @@
 
 id: modules06
 
-title: itsdangerous 生成临时身份令牌
+title: 临时身份令牌
 ---
 
 ## 安装

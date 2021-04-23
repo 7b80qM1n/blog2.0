@@ -223,7 +223,7 @@ pip install django-cors-headers
 ```python
 """
 1.管理员连接数据库
->: mysql -uroot -proot
+>: mysql -uroot -p
 2.创建数据库
 >: create database luffyapi default charset=utf8;
 """
