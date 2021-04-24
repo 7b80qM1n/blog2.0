@@ -41,3 +41,10 @@ VCS - Get -Remotes.
 **想要查看的类右键** 
 
 **Diagrams  -  show Diagram...  -  Python Class Diagram    可视化类继承关系**
+
+## DEBUG使用
+
+
+
+![image-20210424115441553](https://gitee.com/JqM1n/biog-image/raw/master/20210424115928.png)
+
