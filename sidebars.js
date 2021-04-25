@@ -56,7 +56,7 @@ module.exports = {
               
 
     ],
-    常用模块组件:[
+    常用:[
               "note/Commonly used modules/json模块/modules02",
               "note/Commonly used modules/sys模块/modules03",
               "note/Commonly used modules/异常处理/modules04",
@@ -64,7 +64,9 @@ module.exports = {
               "note/Commonly used modules/os文件目录/modules05",
               "note/Commonly used modules/临时身份令牌/modules06",
               "note/Commonly used modules/FastDFS/element-FastDFS",
-              "note/Commonly used modules/QQ登录接入/modules08"
+              "note/Commonly used modules/QQ登录接入/modules08",
+              "note/Commonly used modules/MInIO/element-MInIO",
+              "note/Commonly used modules/CKEditor/element-CKEditor",
               
     ],
     前端:["note/frontEnd/http/http01",

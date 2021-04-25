@@ -110,3 +110,188 @@ sudo docker container start storage
 ```
 
 **注意：如果无法重新运行，可以删除`/var/fdfs/storage/data`目录下的`fdfs_storaged.pid` 文件，然后重新运行storage。**
+
+## FastDFS客户端
+
+### 安装
+
+```python
+pip install py3Fdfs
+```
+
+#### 包的说明
+
+py3fdfs源于fdfs-client,但在使用过程中, 和旧版略有不同(py3fdfs官网示例有误)
+
+创建client实例对象的时候不能直接传入配置文件的地址字符串,否则报错.错误代码:
+
+TypeError: type object argument after ** must be a mapping, not str
+
+通过模块内`get_tracker_conf`函数, 获取配置文件后传入
+
+上传成功后返回的字典内, 其中`Remote file_id`键对应的值由旧版模块`string`类型更改为`byte`类型.则, 返回的文件id是`byte`类型
+
+如果项目中有自定义上传类, 需要解码返回的文件id为字符串,否则服务器报错.错误代码:
+
+a bytes-like object is required, not 'str'
+
+### 使用
+
+使用FastDFS客户端，需要有配置文件
+
+#### utils.py/FastDFS/client.conf
+
+```python
+connect_timeout = 30  #  连接超时时间，针对socket套接字函数connect
+network_timeout = 60  #  tracker server的网络超时，单位为秒。发送或接收数据时，如果在超时时间后还不能发送或接收数据，则本次网络通信失败。 
+base_path=FastDFS客户端存放日志文件的目录
+tracker_server=运行tracker服务的机器ip:22122
+log_level = info
+use_connection_pool = false
+connection_pool_max_idle_time = 3600
+load_fdfs_parameters_from_tracker = false
+use_storage_id = false  # 是否使用server ID作为storage server标识
+storage_ids_filename = storage_ids.conf 
+# use_storage_id 设置为true，才需要设置本参数
+# 在文件中设置组名、server ID和对应的IP地址，参见源码目录下的配置示例：conf/storage_ids.conf
+http.tracker_server_port = 80
+```
+
+## 自定义Django文件存储系统
+
+Django自带文件存储系统，但是默认文件存储在本地，我们需要将文件保存到FastDFS服务器上，所以需要自定义文件存储系统
+
+1. 需要继承自`django.core.files.storage.Storage`，如
+
+   ```python
+   from django.core.files.storage import Storage
+   
+   class FastDFSStorage(Storage):
+       ...
+   ```
+
+2. 支持Django不带任何参数来实例化存储类，也就是说任何设置都应该从django.conf.settings中获取
+
+   ```python
+   from django.conf import settings
+   from django.core.files.storage import Storage
+   
+   class FastDFSStorage(Storage):
+       def __init__(self, base_url=None, client_conf=None):
+           self.base_url = base_url or settings.FDFS_URL
+           self.client_conf = client_conf or get_tracker_conf(settings.FDFS_CLIENT_CONF)
+   ```
+
+3. 存储类中必须实现`_open()`和`_save()`方法，以及任何后续使用中可能用到的其他方法
+
+   `_open(name, mode='rb')`
+
+   被Storage.open()调用，在打开文件时被使用。
+
+   `_save(name, content)`
+
+   被Storage.save()调用，name是传入的文件名，content是Django接收到的文件内容，该方法需要将content文件内容保存。
+
+   Django会将该方法的返回值保存到数据库中对应的文件字段，也就是说该方法应该返回要保存在数据库中的文件名称信息。
+
+   `exists(name)`
+
+   如果名为name的文件在文件系统中存在，则返回True，否则返回False。
+
+   `url(name)`
+
+   返回文件的完整访问URL
+
+   `delete(name)`
+
+   删除name的文件
+
+   `listdir(path)`
+
+   列出指定路径的内容
+
+   `size(name)`
+
+   返回name文件的总大小
+
+   注意，并不是这些方法全部都要实现，可以省略用不到的方法。
+
+4. 需要为存储类添加`django.utils.deconstruct.deconstructible`装饰器
+
+   #### utils.py/FastDFS/FastDFStest
+
+   ```python
+   from django.conf import settings
+   from django.core.files.storage import Storage
+   from django.utils.deconstruct import deconstructible
+   from fdfs_client.client import Fdfs_client, get_tracker_conf
+   
+   
+   @deconstructible
+   class FastDFSStorage(Storage):
+       def __init__(self, base_url=None, client_conf=None):
+           """
+           初始化
+           :param base_url: 用于构造图片完整路径使用，图片服务器的域名
+           :param client_conf: FastDFS客户端配置文件的路径
+           """
+           self.base_url = base_url or settings.FDFS_URL
+           self.client_conf = client_conf or get_tracker_conf(settings.FDFS_CLIENT_CONF)
+   
+       def _open(self, name, mode='rb'):
+           """
+           用不到打开文件，所以省略
+           """
+           pass
+   
+       def _save(self, name, content):
+           """
+           在FastDFS中保存文件
+           :param name: 传入的文件名
+           :param content: 文件内容
+           :return: 保存到数据库中的FastDFS的文件名
+           """
+   
+           client = Fdfs_client(self.client_conf)
+           result = client.upload_by_buffer(content.read())
+   
+           if result.get('Status') != 'Upload successed.':
+               raise Exception('上传文件到FastDFS失败')
+   
+           file_name = result.get("Remote file_id")
+           return file_name.decode()
+   
+       def url(self, name):
+           """
+           返回文件的完整URL路径
+           :param name: 数据库中保存的文件名
+           :return: 完整的URL
+           """
+           return self.base_url + name
+   
+       def exists(self, name):
+           """
+           判断文件是否存在，FastDFS可以自行解决文件的重名问题
+           所以此处返回False，告诉Django上传的都是新文件
+           :param name:  文件名
+           :return: False
+           """
+           return False
+   ```
+
+
+## 在Django配置中设置自定义文件存储类
+
+### settings/dev.py
+
+```python
+# django文件存储
+DEFAULT_FILE_STORAGE = '.utils.FastDFS.FastDFStest.FastDFSStorage'
+
+# FastDFS
+FDFS_URL = 'http://运行tracker服务的机器ip:8888/'  
+FDFS_CLIENT_CONF = os.path.join(BASE_DIR, 'utils/fastdfs/client.conf')
+```
+
+## 
+
