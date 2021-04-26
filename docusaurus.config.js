@@ -58,18 +58,19 @@ module.exports = {
             },
             {
               label: "前端",
-              // position: "right",
               to: "docs/note/frontEnd/http/http01",
             },
             {
               label: "后端",
-              // position: "right",
               to: "docs/note/pythonBackend/python三大框架/pythonBackend-1",
             },
             {
               label: "linux",
-              // position: "right",
               to: "docs/note/linux/基本指令/linux-basic1",
+            },
+            {
+              label: "数据库",
+              to: "docs/note/Database/mysql/Database-mysql",
             },
           ],
         },

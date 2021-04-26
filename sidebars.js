@@ -53,6 +53,7 @@ module.exports = {
               "note/pythonBasics/迭代器和生成器/pythonBasics-Iterableobject1",
               "note/pythonBasics/名称空间/pythonBasics-Namespacing1",
               "note/pythonBasics/闭包+装饰器/pythonBasics-decorator1",
+              "note/pythonBasics/反射机制/pythonBasics-getattr",
               
 
     ],
@@ -76,6 +77,12 @@ module.exports = {
           "note/frontEnd/jQuery/frontEnd-jQuery1",
           "note/frontEnd/Ajax/frontEnd-Ajax1",
           "note/frontEnd/Vue/frontEnd-Vue1",
+
+    ],
+    数据库:["note/Database/mysql/Database-mysql",
+            "note/Database/pymysql/Database-pymysql",
+            "note/Database/mysql补充/Database-mysql01",
+            "note/Database/redis/Database-redis"
 
     ],
     django:["note/pythonBackend/python三大框架/pythonBackend-1",
