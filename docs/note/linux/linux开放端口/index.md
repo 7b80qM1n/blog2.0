@@ -1,6 +1,6 @@
 ---
 
-id: Assorted-linuxport1
+id: linux-port01
 
 title: linux开放端口
 ---

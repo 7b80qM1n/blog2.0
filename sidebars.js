@@ -43,7 +43,6 @@ module.exports = {
               "note/Assorted/虚拟环境搭建/Assorted-virtualenv1",
               "note/Assorted/配置pip安装源/Assorted-pip1",
               "note/Assorted/git整理/Assorted-git整理",
-              "note/Assorted/linux开放端口/Assorted-linuxport1",
     ],
     py基础:["note/pythonBasics/代码块缓存机制/pythonBasics-01",
               "note/pythonBasics/str常用操作/pythonBasics-str1",
@@ -99,6 +98,7 @@ module.exports = {
             "note/linux/nginx/linux-nginx1",
             "note/linux/docker/linux-docker1",
             "note/linux/部署环境准备/linux-deploy1",
+            "note/linux/linux开放端口/linux-port01",
     ],
     爬虫:["note/webCrawlers/基本操作/Webcrawlers-basics1",
 

@@ -142,3 +142,114 @@ drf-extensions扩展对于缓存提供了三个扩展类：
   为视图集同时补充List和Retrieve两种缓存，与ListModelMixin和RetrieveModelMixin一起配合使用。
 
 三个扩展类都是在`rest_framework_extensions.cache.mixins`中。
+
+## 页面静态化
+
+页面静态化即将动态渲染生成的页面结果保存成html文件，放到静态文件服务器中。用户访问的时候访问的直接是处理好之后的html静态文件。
+
+**对于页面中属于每个用户展示不同数据内容的部分，可以在用户请求完静态化之后的页面后，在页面中向后端发送请求，获取属于用户的特殊的数据。**
+
+
+
+在页面中既会用到Django的模板语法，也会用到前端Vue的模板语法，可以通过在前端中修改Vue的模板变量语法来避免冲突
+
+```python
+var vm = new Vue({
+    el: '#app',
+    delimiters: ['[[', ']]'],
+    ...
+})
+```
+
+对于首页的静态化，考虑到页面的数据可能由多名运营人员维护，并且经常变动，所以将其做成定时任务，即定时执行静态化。
+
+在Django执行定时任务，可以通过django-crontab扩展来实现。
+
+### 安装
+
+```shell
+pip install django-crontab
+```
+
+### 添加应用
+
+```python
+INSTALLED_APPS = [
+    ...
+    'django_crontab',  # 定时任务
+    ...
+]
+```
+
+### 设置任务的定时时间
+
+在配置文件中设置定时执行的时间
+
+每个定时任务分为三部分定义：
+
+- 任务时间
+
+  ```shel
+  基本格式 :
+  
+  * * * * *
+  
+  分 时 日 月 周      命令
+  
+  M: 分钟（0-59）。每分钟用*或者 */1表示
+  
+  H：小时（0-23）。（0表示0点）
+  
+  D：天（1-31）。
+  
+  m: 月（1-12）。
+  
+  d: 一星期内的天（0~6，0为星期天）。
+  ```
+
+- 任务方法
+
+- 任务日志
+
+首页的定时任务设置如下
+
+```python
+# 定时任务
+CRONJOBS = [
+    # 每5分钟执行一次生成主页静态文件
+    ('*/5 * * * *', 'contents.crons.generate_static_index_html', '>> /Users/delron/Desktop/meiduo_mall/logs/crontab.log')
+]
+```
+
+### 解决中文字符问题
+
+在定时任务中，如果出现非英文字符，会出现字符异常错误
+
+![crontab错误](https://gitee.com/JqM1n/biog-image/raw/master/20210426174723.png)
+
+可以通过在配置文件中添加定时任务执行的附加命令来实现
+
+```python
+# 解决crontab中文问题
+CRONTAB_COMMAND_PREFIX = 'LANG_ALL=zh_cn.UTF-8'
+```
+
+### 开启定时任务
+
+添加定时任务到系统中
+
+```shell
+python manage.py crontab add
+```
+
+显示已经激活的定时任务
+
+```shell
+python manage.py crontab show
+```
+
+移除定时任务
+
+```shellv
+python manage.py crontab remove
+```

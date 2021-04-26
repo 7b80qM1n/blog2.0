@@ -14,7 +14,6 @@ $ git clone https://github.com/zxuqian/zxuqian.cn.git
 安装依赖：
 
 ```bash
-$ cd zxuqian.cn
 $ yarn install
 # 或使用 npm install，下同
 ```
@@ -59,8 +58,7 @@ $ yarn build-cn
 │   └── en                         # 英文本地化
 ├── package.json
 ├── scripts                        # 自动化脚本
-│   ├── create.mjs                 # 自动创建视频文档模板
-│   └── getVideoList.mjs           # 获取本人所有视频列表（测试用途）
+│   └── create.mjs                 # 自动创建视频文档模板
 ├── sidebars.js                    
 ├── src
 │   ├── components                 # 自定义组件
