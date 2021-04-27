@@ -840,7 +840,13 @@ class BookView(ListAPIView):
     queryset = Book.objects.all()
     serializer_class = BookSerializer
     filter_backends = [DjangoFilterBackend,] # 局部配
-    filter_fields = ('name',)  # 配置可以按照哪个字段来过滤
+    filter_fields = ('name',)  # 配置可以按照哪个字段来过滤,支持外键字段
+    
+# urls.py
+path('books/', views.BookView.as_view())
+
+# 使用：
+http://127.0.0.1:8000/books/?name=1
 ```
 
 第二种方式: 
