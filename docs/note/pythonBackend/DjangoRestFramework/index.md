@@ -1122,6 +1122,14 @@ eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4
 
 内部还集成了超时时间,后端可以根据时间校验是否超时 内部还存在hash256加密,所以用户不可以修改token,只要一修改就认证失败
 
+### 流程
+
+1. 用账号密码访问登录接口，登录接口逻辑中调用 签发token 算法，得到token，返回给客户端，客户端自己存到cookies中
+
+2. 校验token的算法应该写在认证类中(在认证类中调用)，全局配置给认证组件，所有视图类请求，都会进行认证校验，所以请求带了token，就会反解出user对象，在视图类中用request.user就能访问登录的用户
+
+   注：登录接口需要做 认证 + 权限 两个局部禁用
+
 1. 安装
 
    ```python
@@ -1138,59 +1146,95 @@ eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4
        )
    ```
 
-3. 
+3. 生成使用
+
+   ```python
+   from rest_framework_jwt.serializers import jwt_payload_handler, jwt_encode_handler
+   # 根据user对象生成payload(中间值的数据)
+   payload = jwt_payload_handler(user)
+   # 构造前面数据，bose64加密；中间数据bose64加密;前两段拼接然后做hs256加密（加盐），再做base64加密，生成token
+   token = jwt_encode_handler(payload)
+   ```
+
+   
+
+4. 配置
+
+   ```python
+   REST_FRAMEWORK = {
+       'DEFAULT_AUTHENTICATION_CLASSES': (
+           'rest_framework_jwt.authentication.JSONWebTokenAuthentication',  # 全局配置,优先使用jwt的认证
+           'rest_framework.authentication.SessionAuthentication',
+           'rest_framework.authentication.BasicAuthentication',
+       ),
+   }
+   
+   JWT_AUTH = {
+       'JWT_EXPIRATION_DELTA': datetime.timedelta(days=1),  # 过期时间
+   }
+   ```
+
+5. 局部配置
+
+   ```python
+   authentication_classes = [JSONWebTokenAuthentication, ]  # 局部启用
+   authentication_classes = []  # 局部禁用
+   permission_classes = [IsAuthenticated, ]  # 通过认证的用户
+   ```
+
+   延后认证(pass之后,只有当第一次通过request.user或request.auth才做认证)
+
+   ```python
+   class CartView(APIView):
+       def perform_authentication(self, request):
+           """
+           重写父类的用户验证方法，不在进入视图前就检查JWT
+           """
+           pass
+   ```
+
+基于drf-jwt的全局认证：
+
+app_auth.py
 
 ```python
-from rest_framework_jwt.serializers import jwt_payload_handler, jwt_encode_handler
-# 根据user对象生成payload(中间值的数据)
-jwt_payload_handler = api_settings.JWT_PAYLOAD_HANDLER
-payload = jwt_payload_handler(user)
-# 构造前面数据，bose64加密；中间数据bose64加密;前两段拼接然后做hs256加密（加盐），再做base64加密，生成token
-jwt_encode_handler = api_settings.JWT_ENCODE_HANDLER
-token = jwt_encode_handler(payload)
- 4.配置过期时间
- import datetime
-JWT_AUTH = {
-    'JWT_EXPIRATION_DELTA': datetime.timedelta(seconds=10),  # jwt过期时间
-}
-# jwt的认证
-import jwt
-from api import models
-from rest_framework.authentication import BaseAuthentication
 from rest_framework.exceptions import AuthenticationFailed
-from rest_framework_jwt.settings import api_settings
+from rest_framework_jwt.authentication import jwt_decode_handler
+from rest_framework_jwt.authentication import get_authorization_header,jwt_get_username_from_payload
+from rest_framework_jwt.authentication import BaseJSONWebTokenAuthentication
 
-class HulaQueryParamAuthentication(BaseAuthentication):
+class JSONWebTokenAuthentication(BaseJSONWebTokenAuthentication):
     def authenticate(self, request):
+        jwt_value = get_authorization_header(request)
 
-        token = request.query_params.get('token')
-
-        if not token:
-            raise AuthenticationFailed({'code': 1002, "error": '登陆成功后才能操作'})
-
-        jwt_decode_handler = api_settings.JWT_DECODE_HANDLER
+        if not jwt_value:
+            raise AuthenticationFailed('Authorization 字段是必须的')
         try:
-            payload = jwt_decode_handler(token)
+            payload = jwt_decode_handler(jwt_value)
         except jwt.ExpiredSignature:
-            msg = {'code': 1003, "error": 'token已过期'}
-            raise AuthenticationFailed(msg)
-        except jwt.DecodeError:
-            msg = {'code': 1004, "error": 'token格式错误'}
-            raise AuthenticationFailed(msg)
+            raise AuthenticationFailed('签名过期')
         except jwt.InvalidTokenError:
-            msg = {'code': 1005, "error": '认证失败'}
-            raise AuthenticationFailed(msg)
+            raise AuthenticationFailed('非法用户')
+        user = self.authenticate_credentials(payload)
 
-        # 认证成功
-        user_object = models.UserInfo.objects.filter(username=payload['username']).firet()
-        return (user_object, token)
-class OrderView(APIView):
-    authentication_classes = [HulaQueryParamAuthentication, ]
-    def get(self, request, *args, **kwargs):
-        request.user  # 用户对象
-        request.auth  # token
-        return Response('...')
+        return user, jwt_value
 ```
+
+前端如何应用:
+
+一般是在请求头里加入`Authorization`，并加上`Bearer`标注：
+
+Bearer默认是JWT
+
+```python
+fetch('api/user/1', {
+  headers: {
+    'Authorization': 'Bearer ' + token
+  }
+})
+```
+
+
 
 ## DRF总结
 

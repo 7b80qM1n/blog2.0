@@ -44,6 +44,7 @@ module.exports = {
               "note/Assorted/配置pip安装源/Assorted-pip1",
               "note/Assorted/git整理/Assorted-git整理",
     ],
+    
     py基础:["note/pythonBasics/代码块缓存机制/pythonBasics-01",
               "note/pythonBasics/str常用操作/pythonBasics-str1",
               "note/pythonBasics/列表常用操作/pythonBasics-list1",
@@ -103,5 +104,10 @@ module.exports = {
     爬虫:["note/webCrawlers/基本操作/Webcrawlers-basics1",
 
     ],
+    数据结构和算法:[
+      "note/Data structures and algorithms/summarize/Data structures and algorithms-summarize",
+      "note/Data structures and algorithms/data structure/Data structures and algorithms-data structure",
+      "note/Data structures and algorithms/arithmetic/Data structures and algorithms-arithmetic",
+],
   },
 };
